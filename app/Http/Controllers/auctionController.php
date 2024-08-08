@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\tbl_auction;
 use App\Models\tbl_auction_category;
-use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use Illuminate\Support\Facades\Storage;
 
 class auctionController extends Controller
@@ -42,61 +43,98 @@ class auctionController extends Controller
         return redirect('auction-list');
     }
 
-    function bulk_upload_auction(request $request){
+    function bulk_upload_auction(request $request)
+    {
         return view('auction.bulk_add_auction');
     }
     function post_bulk_auction(request $request)
-    {   
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls',
+        ]);
+
         $path = $request->file('file')->store('temp');
+        $filePath = storage_path('app/' . $path);
 
-        $data = Excel::toArray([], storage_path('app/' . $path));
-        dd($data);
-
-        foreach ($data[0] as $row) {
-
-            $imagePath = $this->handleImage($row['img'], $request);
-            if ($request->hasFile('img')) {
-                $file = $request->file('img');
-                $path = $file->move(public_path('storage/auction'), $file->getClientOriginalName());
-                $request->img = 'storage/auction/' . $path->getFilename();
+        $spreadsheet = IOFactory::load($filePath);
+        $sheet = $spreadsheet->getActiveSheet();
+        $imagePaths = $this->extractImages($sheet);
+        foreach ($sheet->getRowIterator() as $rowIndex => $row) {
+            if ($rowIndex === 1) {
+                continue;
             }
+
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
+
+            $columns = [];
+            foreach ($cellIterator as $cell) {
+                $columns[] = $cell->getValue();
+            }
+            $img = isset($imagePaths[$rowIndex - 1]) ? $imagePaths[$rowIndex - 1] : 'null';
+            echo $img;
+            echo "<br>";
             tbl_auction::create([
-                'title' => $row['title'],
-                'description' => $row['description'],
-                'start' => $row['Start Date'],
-                'next' => $row['Start Date'],
-                'img' => $imagePath,
-                
+                'title' => trim($columns[0]),
+                'description' => trim($columns[1]),
+                'start' =>  ExcelDate::excelToDateTimeObject($columns[2]),
+                'end' =>  ExcelDate::excelToDateTimeObject($columns[3]),
+                'img' => $img,
+                'type' => trim($columns[5]),
+                'category' => trim($columns[6]),
+                'lots' => trim($columns[7]),
+                'terms_and_conditions' => trim($columns[8]),
+                'buyer_premium' => trim($columns[9]),
+                'seller_commission' => trim($columns[10]),
+                'fees' => trim($columns[11]),
+                'vat_rate' => trim($columns[12]),
             ]);
         }
-
-        // Delete the temporary file
         Storage::delete($path);
-        // $csv = $request->file('file');
-        // $file_path = $csv->getRealPath();
-        // $csv_file = fopen($file_path, "r");
-        // $header = fgetcsv($csv_file);
-        // $count_new = 0;
-        // while ($column = fgetcsv($csv_file)) {
-        //     $auction = tbl_auction::create([
-        //         'title' => trim($column[0]),
-        //         'description' => trim($column[1]),
-        //         'start' =>trim($column[2]),
-        //         'end' => trim($column[3]),
-        //         'img' => trim($column[4]),
-        //         'type' => trim($column[5]),
-        //         'category' => trim($column[6]),
-        //         'lots' => trim($column[7]),
-        //         'terms_and_conditions' => trim($column[8]),
-        //         'buyer_premium' => trim($column[9]),
-        //         'seller_commission' => trim($column[10]),
-        //         'fees' => trim($column[11]),
-        //         'vat_rate' => trim($column[12]),
-        //         'other_tax' => trim($column[13]),
-        //     ]);
-        //     $count_new++;
-        // }
         return redirect('auction-list');
+    }
+
+    private function extractImages($sheet)
+    {
+        $imagePaths = [];
+        foreach ($sheet->getDrawingCollection() as $drawing) {
+            $coordinates = $drawing->getCoordinates();
+            $rowIndex = $sheet->getCell($coordinates)->getRow();
+
+            if ($drawing instanceof \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing) {
+                ob_start();
+                call_user_func(
+                    $drawing->getRenderingFunction(),
+                    $drawing->getImageResource()
+                );
+                $imageContents = ob_get_contents();
+                ob_end_clean();
+                $extension = $this->mimeToExtension($drawing->getMimeType());
+            } else {
+                $path = $drawing->getPath();
+                $imageContents = file_get_contents($path);
+                $extension = pathinfo($path, PATHINFO_EXTENSION);
+            }
+
+            $newImageName = uniqid() . '.' . $extension;
+            $p = Storage::disk('public')->put('storage/auction/' . $newImageName, $imageContents);
+            $imagePaths[$rowIndex - 1] = 'storage/auction/' . $newImageName;
+        }
+
+        return $imagePaths;
+    }
+
+    private function mimeToExtension($mime)
+    {
+        $mime_map = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+            'image/bmp' => 'bmp',
+            'image/tiff' => 'tif',
+        ];
+
+        return isset($mime_map[$mime]) ? $mime_map[$mime] : 'bin';
     }
 
     function auction_list(request $request)
