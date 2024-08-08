@@ -4,9 +4,9 @@
 @endpush
 
 @push('styles')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />\
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />\
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
 @endpush
 
 @push('content')
@@ -30,10 +30,19 @@
                         <i class="icon-arrow-right"></i>
                     </li>
                     <!-- <li class="nav-item">
-                                                                        <a href="#">Starter Page</a>
-                                                                    </li> -->
+                                                                            <a href="#">Starter Page</a>
+                                                                        </li> -->
                 </ul>
             </div>
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <div class="page-category">
                 <div class="row">
                     <div class="col-md-12">
@@ -47,21 +56,21 @@
                                         @csrf
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">
-                                                <label for="file">Upload Please CSV Format File </label>
-                                                <input type="file" class="form-control" name="file" id="file"
+                                                <label for="file">Upload only .xlsx | .xls</label>
+                                                <input type="file" class="form-control" name="file" id="file" accept=".xlsx, .xls"
                                                     placeholder="">
                                             </div>
-                                        <div class="row">
-                                            <div class="form-group text-center">
-                                                <button class="btn btn-success" type="submit">Submit</button>
+                                            <div class="row">
+                                                <div class="form-group text-center">
+                                                    <button class="btn btn-success" type="submit">Submit</button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
                                 </form>
-                                <div class="form-group">
-                                                <label class="h1" for="file">Check this dummy File</label>
-                                                <a class="form-control" href="{{url('storage/auction/auction_bulk_upload.csv')}}">Dummy Demo File</a>
-                                    </div>
+                                <div class="form-group col-lg-4">
+                                    <label class="h1" for="file">Check this dummy File</label>
+                                    <a class="form-control h3" href="{{url('storage/auction/auction_bulk_upload.xlsx')}}"><u><b>Demo File</b></u></a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -73,21 +82,21 @@
 
 @push('scripts')
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
     <script>
-        $(document).ready(function() {
-        $('#category').select2();
-    });
+        $(document).ready(function () {
+            $('#category').select2();
+        });
         function valid(e) {
             e.preventDefault();
-            const title         = $('#title').val();
-            const description   = $('#description').val();
-            const img           = $('#img').val();
-            const start         = $('#start_date').val();
-            const end           = $('#end_date').val();
-            const type          = $('#type').val();
-            const category      = $('#category').val();
-            const lots          = $('#lots').val();
+            const title = $('#title').val();
+            const description = $('#description').val();
+            const img = $('#img').val();
+            const start = $('#start_date').val();
+            const end = $('#end_date').val();
+            const type = $('#type').val();
+            const category = $('#category').val();
+            const lots = $('#lots').val();
         }
     </script>
 @endpush
