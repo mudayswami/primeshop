@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create("tbl_auction", function (Blueprint $table){
             $table->id();   
+            $table->string('enc_id');   
             $table->integer('status')->default(1);
             $table->string("title");
             $table->text("description");
@@ -22,7 +23,7 @@ return new class extends Migration
             $table->string('type');
             $table->string('category');
             $table->integer('lots');
-            $table->text('terms_and_conditions');
+            $table->text('terms_and_conditions')->nullable();
             $table->integer('buyer_premium');
             $table->integer('seller_commission');
             $table->integer('fees');

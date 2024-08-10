@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create("tbl_lot",function (Blueprint $table){
             $table->id();
-            $table->integer('status');
+            $table->string('enc_id');
+            $table->integer('status')->default(1);
             $table->foreignId('auction_id')->references('id')->on('tbl_auction')->constrained()->onDelete('cascade');
             $table->integer('lot_num');
             $table->string('title');

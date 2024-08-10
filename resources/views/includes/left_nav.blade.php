@@ -79,7 +79,7 @@
                             <div class="collapse" id="sidebarLayouts">
                                 <ul class="nav nav-collapse">
                                 <li>
-                                        <a href="auction-list">
+                                        <a href="{{url('auction-list')}}">
                                             <span class="sub-item">Auction Listing</span>
                                         </a>
                                     </li>
@@ -125,13 +125,13 @@
                                             <span class="sub-item">Add Lot</span>
                                         </a>
                                     </li>
-                                    <!-- <li>
-                                        <a href="forms/forms.html">
-                                            <span class="sub-item">Add Bulk Lot</span>
-                                        </a>
-                                    </li> -->
                                     <li>
-                                        <a href="forms/forms.html">
+                                        <a href="{{url('bulk-upload-lots')}}">
+                                            <span class="sub-item">Add Bulk Lots</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{url('lot-list')}}">
                                             <span class="sub-item">Lots Listing</span>
                                         </a>
                                     </li>

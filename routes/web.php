@@ -38,5 +38,9 @@ Route::post('add-auction-category',[auctionController::class,'post_category']);
 
 Route::get('add-lot',[lotController::class,'add_lot']);
 Route::post('add-lot',[lotController::class,'post_lot']);
+Route::get('lot/edit/{slug}',[lotController::class,'lot_edit']);
+Route::post('update-lot/{slug}',[lotController::class,'update_lot']);
 Route::get('lot-list',[lotController::class,'lot_list']);
+Route::get('bulk-upload-lots',[lotController::class,'BulkUploadsLots']);
+Route::post('bulk-add-lots',[lotController::class,'post_bulk_lots']);
 // End Lots

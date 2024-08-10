@@ -59,10 +59,12 @@
                                     <tbody>
                                         @foreach ($lots as $key => $value)
                                                     <tr class="@if($key % 2 == 0) odd @else even @endif">
-                                                        <td>@if($value['status'] == 1)
-                                                        <span class="badge rounded-pill bg-success">Active</span>
-                                                        @else<span class="badge rounded-pill bg-danger">InActive</span>
-                                                            @endif
+                                                        <td>
+                                                        @if($value['status'] == 1)
+                                                            <span class="badge rounded-pill bg-success">Active</span>
+                                                        @else
+                                                            <span class="badge rounded-pill bg-danger">InActive</span>
+                                                        @endif
                                                             </td>
                                                         <td>{{$value['title']}}</td>
                                                         <td>{{$value['auction_id']}}</td>
@@ -70,7 +72,7 @@
                                                         <td>{{$value['condition']}}</td>
                                                         <td>{{($value['category'])}}</td>
                                                         <td>{{$value['ship_info']}}</td>
-                                                        <td><a href="{{url('auction/edit/'.$value['id'])}}"><div class="btn btn-primary btn-sm">Edit</div></a> <a id="del_{{$value['id']}}" onclick="del({{$value['id']}})"><div class="btn btn-sm btn-danger">Delete</div></a></td>
+                                                        <td><a href="{{url('lot/edit/'.$value['enc_id'])}}"><div class="btn btn-primary btn-sm">Edit</div></a> <a id="del_{{$value['enc_id']}}" onclick="del({{$value['enc_id']}})"><div class="btn btn-sm btn-danger">Delete</div></a></td>
                                                     </tr>
                                         @endforeach
                                     </tbody>

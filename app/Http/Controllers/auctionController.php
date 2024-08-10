@@ -25,6 +25,7 @@ class auctionController extends Controller
             $request->img = 'storage/auction/' . $path->getFilename();
         }
         $auction = tbl_auction::create([
+            'enc_id'=> md5(date('Y-m-d H:i:s')),
             'title' => $request->title,
             'description' => $request->description,
             'start' => $request->start_date,
@@ -75,6 +76,7 @@ class auctionController extends Controller
             echo $img;
             echo "<br>";
             tbl_auction::create([
+                'enc_id'=> md5(date('Y-m-d H:i:s')),
                 'title' => trim($columns[0]),
                 'description' => trim($columns[1]),
                 'start' =>  ExcelDate::excelToDateTimeObject($columns[2]),
@@ -88,6 +90,7 @@ class auctionController extends Controller
                 'seller_commission' => trim($columns[10]),
                 'fees' => trim($columns[11]),
                 'vat_rate' => trim($columns[12]),
+                'other_tax' => trim($columns[13]),
             ]);
         }
         Storage::delete($path);
