@@ -88,6 +88,11 @@
                                                 </select>
                                             </div>
                                             <div class="form-group">
+                                                <label for="location">Location</label>
+                                                <input type="text" class="form-control" name="location" id="location"
+                                                    placeholder="">
+                                            </div>
+                                            <div class="form-group">
                                                 <label for="lots">Lots</label>
                                                 <input type="number" class="form-control" name="lots" id="lots"
                                                     placeholder="">

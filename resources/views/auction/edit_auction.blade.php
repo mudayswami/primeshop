@@ -89,7 +89,6 @@
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-lg-4">
-
                                             <div class="form-group">
                                                 <label for="type">Type</label>
                                                 <input type="text" class="form-control" name="type" id="type" value="{{$auction['type']}}"
@@ -104,6 +103,11 @@
                                                 </select>
                                             </div>
                                             <div class="form-group">
+                                                <label for="location">Location</label>
+                                                <input type="text" class="form-control" name="location" id="location" value="{{$auction['location']}}"
+                                                    placeholder="">
+                                            </div>
+                                            <div class="form-group">
                                                 <label for="lots">Lots</label>
                                                 <input type="number" class="form-control" name="lots" id="lots" value="{{$auction['lots']}}"
                                                     placeholder="">
@@ -113,7 +117,6 @@
                                                 <textarea class="form-control" id="terms" name="terms" 
                                                     aria-label="With textarea" rows="3">{{$auction['terms_and_conditions']}}</textarea>
                                             </div>
-
                                         </div>
                                         <div class="col-md-6 col-lg-4">
                                             <div class="form-group">

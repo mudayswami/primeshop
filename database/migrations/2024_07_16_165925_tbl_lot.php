@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create("tbl_lot",function (Blueprint $table){
+        Schema::create("lot",function (Blueprint $table){
             $table->id();
             $table->string('enc_id');
             $table->integer('status')->default(1);

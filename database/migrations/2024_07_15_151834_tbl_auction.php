@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create("tbl_auction", function (Blueprint $table){
+        Schema::create("auction", function (Blueprint $table){
             $table->id();   
             $table->string('enc_id');   
             $table->integer('status')->default(1);
@@ -22,6 +22,7 @@ return new class extends Migration
             $table->dateTime('end');
             $table->string('type');
             $table->string('category');
+            $table->string('location');
             $table->integer('lots');
             $table->text('terms_and_conditions')->nullable();
             $table->integer('buyer_premium');

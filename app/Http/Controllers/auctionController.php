@@ -33,6 +33,7 @@ class auctionController extends Controller
             'img' => $request->img,
             'type' => $request->type,
             'category' => json_encode($request->category),
+            'location' => $request->location,
             'lots' => $request->lots,
             'terms_and_conditions' => $request->terms,
             'buyer_premium' => $request->buyer_premium,
@@ -84,13 +85,14 @@ class auctionController extends Controller
                 'img' => $img,
                 'type' => trim($columns[5]),
                 'category' => trim($columns[6]),
-                'lots' => trim($columns[7]),
-                'terms_and_conditions' => trim($columns[8]),
-                'buyer_premium' => trim($columns[9]),
-                'seller_commission' => trim($columns[10]),
-                'fees' => trim($columns[11]),
-                'vat_rate' => trim($columns[12]),
-                'other_tax' => trim($columns[13]),
+                'location' => trim($columns[7]),
+                'lots' => trim($columns[8]),
+                'terms_and_conditions' => trim($columns[9]),
+                'buyer_premium' => trim($columns[10]),
+                'seller_commission' => trim($columns[11]),
+                'fees' => trim($columns[12]),
+                'vat_rate' => trim($columns[13]),
+                'other_tax' => trim($columns[14]),
             ]);
         }
         Storage::delete($path);
@@ -172,6 +174,7 @@ class auctionController extends Controller
         $auction->img = $request->img;
         $auction->type = $request->type;
         $auction->category = json_encode($request->category);
+        $auction->location = $request->location;
         $auction->lots = $request->lots;
         $auction->terms_and_conditions = $request->terms;
         $auction->buyer_premium = $request->buyer_premium;
