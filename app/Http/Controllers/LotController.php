@@ -24,8 +24,10 @@ class LotController extends Controller
     {
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            $path = $file->move('/usr/share/nginx/html/primeauction/public/storage/auction/', $file->getClientOriginalName());
-            $request->img = 'storage/auction/' . $path->getFilename();
+            $path = Storage::disk('primeauction')->put('storage/auction/' . $file->getClientOriginalName(), $file);
+            // $path = $file->move('/usr/share/nginx/html/primeauction/public/storage/auction/', $file->getClientOriginalName());
+            $path = Storage::disk('primeauction')->put('storage/auction/' . $file->getClientOriginalName(), $file);
+            $request->img = $path;
         }
         $lot = Lot::create([
             'enc_id' => md5(date('Y-m-d H:i:s')),
@@ -69,8 +71,9 @@ class LotController extends Controller
     {
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            $path = $file->move('/usr/share/nginx/html/primeauction/public/storage/auction/', $file->getClientOriginalName());
-            $request->img = '/usr/share/nginx/html/primeauction/public/storage/auction/' . $path->getFilename();
+            // $path = $file->move('/usr/share/nginx/html/primeauction/public/storage/auction/', $file->getClientOriginalName());
+            $path = Storage::disk('primeauction')->put('storage/auction/' . $file->getClientOriginalName(), $file);
+            $request->img = $path;
         }
         $lot = Lot::firstOrFail()->where('enc_id', $slug)->first();
         if (!$lot) {
@@ -184,8 +187,8 @@ class LotController extends Controller
             }
 
             $newImageName = uniqid() . '.' . $extension;
-            $p = Storage::disk('public')->put('storage/auction/' . $newImageName, $imageContents);
-            $imagePaths[$rowIndex - 1] = 'storage/auction/' . $newImageName;
+            $p = Storage::disk('primeauction')->put('storage/auction/' . $newImageName, $imageContents);
+            $imagePaths[$rowIndex - 1] = $p;
         }
 
         return $imagePaths;

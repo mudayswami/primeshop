@@ -152,7 +152,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="bids">
+                                        <a href="{{url('bids')}}">
                                             <span class="sub-item">Bids</span>
                                         </a>
                                     </li>

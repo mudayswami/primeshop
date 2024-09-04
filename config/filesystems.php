@@ -61,6 +61,11 @@ return [
             'throw' => false,
         ],
 
+        'primeauction' => [
+        'driver' => 'local',
+        'root' => '/usr/share/nginx/html/primeauction/public/',
+    ],
+
     ],
 
     /*
@@ -78,5 +83,7 @@ return [
         public_path('storage') => storage_path('/usr/share/nginx/html/primeauction/app/public'),
         public_path('public') => public_path('/usr/share/nginx/html/primeauction/public/'),
     ],
+
+    
 
 ];
