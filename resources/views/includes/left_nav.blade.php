@@ -147,12 +147,17 @@
                             <div class="collapse" id="tables">
                                 <ul class="nav nav-collapse">
                                     <li>
-                                        <a href="tables/tables.html">
+                                        <a href="{{url('approve-bidding')}}">
                                             <span class="sub-item">Bidding Approval Requests</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="tables/datatables.html">
+                                        <a href="bids">
+                                            <span class="sub-item">Bids</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
                                             <span class="sub-item">Winners</span>
                                         </a>
                                     </li>

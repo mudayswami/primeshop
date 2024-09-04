@@ -2,18 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AuctionRegister;
 use Illuminate\Http\Request;
-use App\Models\tbl_auction;
-use App\Models\tbl_auction_category;
+use App\Models\Auction;
+use App\Models\AuctionCategory;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Bids;
 
-class auctionController extends Controller
+class AuctionController extends Controller
 {
     function add_auction()
     {
-        $data['category'] = tbl_auction_category::all();
+        $data['category'] = AuctionCategory::all();
         return view("auction.add_auction", $data);
     }
 
@@ -21,11 +23,11 @@ class auctionController extends Controller
     {
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            $path = $file->move(public_path('storage/auction'), $file->getClientOriginalName());
-            $request->img = 'storage/auction/' . $path->getFilename();
+            $path = $file->move('/usr/share/nginx/html/primeauction/public/storage/auction', $file->getClientOriginalName());
+            $request->img = '/usr/share/nginx/html/primeauction/public/storage/auction/' . $path->getFilename();
         }
-        $auction = tbl_auction::create([
-            'enc_id'=> md5(date('Y-m-d H:i:s')),
+        $auction = Auction::create([
+            'enc_id' => md5(date('Y-m-d H:i:s')),
             'title' => $request->title,
             'description' => $request->description,
             'start' => $request->start_date,
@@ -76,12 +78,12 @@ class auctionController extends Controller
             $img = isset($imagePaths[$rowIndex - 1]) ? $imagePaths[$rowIndex - 1] : 'null';
             echo $img;
             echo "<br>";
-            tbl_auction::create([
-                'enc_id'=> md5(date('Y-m-d H:i:s')),
+            Auction::create([
+                'enc_id' => md5(date('Y-m-d H:i:s')),
                 'title' => trim($columns[0]),
                 'description' => trim($columns[1]),
-                'start' =>  ExcelDate::excelToDateTimeObject($columns[2]),
-                'end' =>  ExcelDate::excelToDateTimeObject($columns[3]),
+                'start' => ExcelDate::excelToDateTimeObject($columns[2]),
+                'end' => ExcelDate::excelToDateTimeObject($columns[3]),
                 'img' => $img,
                 'type' => trim($columns[5]),
                 'category' => trim($columns[6]),
@@ -123,7 +125,7 @@ class auctionController extends Controller
 
             $newImageName = uniqid() . '.' . $extension;
             $p = Storage::disk('public')->put('storage/auction/' . $newImageName, $imageContents);
-            $imagePaths[$rowIndex - 1] = 'storage/auction/' . $newImageName;
+            $imagePaths[$rowIndex - 1] = '/usr/share/nginx/html/primeauction/public/storage/auction/' . $newImageName;
         }
 
         return $imagePaths;
@@ -144,14 +146,14 @@ class auctionController extends Controller
 
     function auction_list(request $request)
     {
-        $data['auctions'] = tbl_auction::all()->sortByDesc('id');
+        $data['auctions'] = Auction::all()->sortByDesc('id');
         return view('auction.auction_list', $data);
     }
 
     function auction_edit(request $request, $id)
     {
-        $data['category'] = tbl_auction_category::all();
-        $data['auction'] = tbl_auction::find($id)->toArray();
+        $data['category'] = AuctionCategory::all();
+        $data['auction'] = Auction::find($id)->toArray();
         return view('auction.edit_auction', $data);
     }
 
@@ -159,10 +161,10 @@ class auctionController extends Controller
     {
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            $path = $file->move(public_path('storage/auction'), $file->getClientOriginalName());
-            $request->img = 'storage/auction/' . $path->getFilename();
+            $path = $file->move('/usr/share/nginx/html//primeauction/public/storage/auction', $file->getClientOriginalName());
+            $request->img = '/usr/share/nginx/html/primeauction/public/storage/auction/' . $path->getFilename();
         }
-        $auction = tbl_auction::find($slug);
+        $auction = Auction::find($slug);
         if (!$auction) {
             die('no auction found');
         }
@@ -188,7 +190,7 @@ class auctionController extends Controller
     function auction_delete(request $request, $id)
     {
         try {
-            $auction = tbl_auction::findOrFail($id);
+            $auction = Auction::findOrFail($id);
             $auction->delete();
             return 1;
         } catch (Exception $e) {
@@ -197,18 +199,47 @@ class auctionController extends Controller
     }
     public function add_category(request $request)
     {
-        $data['category'] = tbl_auction_category::all();
+        $data['category'] = AuctionCategory::all();
         return view('auction.add_category', $data);
     }
 
     function post_category(request $request)
     {
-        $category = tbl_auction_category::create([
+        $category = AuctionCategory::create([
             'category' => $request->title
         ]);
         return "Done";
     }
 
+    function approveBiding()
+    {
+        $data['auction'] = AuctionRegister::join('tbl_auction', 'auction_register.auction_id', '=', 'tbl_auction.id')->
+            join('user', 'user.user_id', '=', 'auction_register.user_id')
+            ->select('auction_register.*', 'user.first_name', 'user.last_name', 'tbl_auction.title', 'tbl_auction.start', 'tbl_auction.end')->orderBy('created_at', 'desc')->get();
+        return view('auction.approveBidding', $data);
+    }
 
+    function auctionApprove(Request $request)
+    {
+        $id = $request->id;
+        if (empty($id))
+            return 'Id not found';
+        $register = AuctionRegister::find($id);
+        if (!empty($register)) {
+                $register->approved = $request->status;
+                $register->save();
+
+            return $request->status;
+        } else {
+            return $request->status;
+        }
+    }
+
+    function bids(Request $request){
+
+        $data['bids'] = Bids::join('tbl_lot','bids.lot','=','tbl_lot.id')->join('user','user.user_id','=','bids.user_id')
+        ->select('bids.*','tbl_lot.title','user.first_name','user.last_name')->get();
+        return view('auction.bids',$data);
+    }
 
 }

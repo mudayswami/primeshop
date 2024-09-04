@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Controllers\dashboardController;
-use App\Http\Controllers\auctionController;
-use App\Http\Controllers\lotController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AuctionController;
+use App\Http\Controllers\LotController;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,31 +15,32 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/',[dashboardController::class,'dashboard']);
+Route::get('/',[DashboardController::class,'dashboard']);
 
 // Auction
-
-Route::get('add-auction',[auctionController::class,'add_auction']);
-Route::post('add-auction',[auctionController::class,'post_auction']);
-Route::get('bulk-upload-auction',[auctionController::class,'bulk_upload_auction']);
-Route::post('bulk-add-auction',[auctionController::class,'post_bulk_auction']);
-Route::get('auction/edit/{id}',[auctionController::class,'auction_edit']);
-Route::post('update-auction/{slug}',[auctionController::class,'update_auction']);
-Route::post('delete-auction/{slug}',[auctionController::class,'auction_delete']);
-Route::get('auction-list',[auctionController::class,'auction_list']);
-Route::get('add-auction-category',[auctionController::class,'add_category']);
-Route::post('add-auction-category',[auctionController::class,'post_category']);
-
+Route::get('add-auction',[AuctionController::class,'add_auction']);
+Route::post('add-auction',[AuctionController::class,'post_auction']);
+Route::get('bulk-upload-auction',[AuctionController::class,'bulk_upload_auction']);
+Route::post('bulk-add-auction',[AuctionController::class,'post_bulk_auction']);
+Route::get('auction/edit/{id}',[AuctionController::class,'auction_edit']);
+Route::post('update-auction/{slug}',[AuctionController::class,'update_auction']);
+Route::post('delete-auction/{slug}',[AuctionController::class,'auction_delete']);
+Route::get('auction-list',[AuctionController::class,'auction_list']);
+Route::get('add-auction-category',[AuctionController::class,'add_category']);
+Route::post('add-auction-category',[AuctionController::class,'post_category']);
+Route::get('approve-bidding',[AuctionController::class,'approveBiding']);
+Route::get('bids',[AuctionController::class,'bids']);
+Route::post('auction-approve',[AuctionController::class,'auctionApprove']);
 // End Auction
 
 
 // Lots
-
-Route::get('add-lot',[lotController::class,'add_lot']);
-Route::post('add-lot',[lotController::class,'post_lot']);
-Route::get('lot/edit/{slug}',[lotController::class,'lot_edit']);
-Route::post('update-lot/{slug}',[lotController::class,'update_lot']);
-Route::get('lot-list',[lotController::class,'lot_list']);
-Route::get('bulk-upload-lots',[lotController::class,'BulkUploadsLots']);
-Route::post('bulk-add-lots',[lotController::class,'post_bulk_lots']);
+Route::get('add-lot',[LotController::class,'add_lot']);
+Route::post('add-lot',[LotController::class,'post_lot']);
+Route::get('lot/edit/{slug}',[LotController::class,'lot_edit']);
+Route::post('update-lot/{slug}',[LotController::class,'update_lot']);
+Route::get('lot-list',[LotController::class,'lot_list']);
+Route::get('bulk-upload-lots',[LotController::class,'BulkUploadsLots']);
+Route::post('bulk-add-lots',[LotController::class,'post_bulk_lots']);
 // End Lots
+

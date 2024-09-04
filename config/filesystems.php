@@ -75,8 +75,8 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
-        public_path('public') => public_path(''),
+        public_path('storage') => storage_path('/usr/share/nginx/html/primeauction/app/public'),
+        public_path('public') => public_path('/usr/share/nginx/html/primeauction/public/'),
     ],
 
 ];

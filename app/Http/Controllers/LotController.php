@@ -3,20 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\tbl_auction_category;
-use App\Models\tbl_auction;
-use App\Models\tbl_lot;
+use App\Models\AuctionCategory;
+use App\Models\Auction;
+use App\Models\Lot;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use Validator;
 use Storage;
 
-class lotController extends Controller
+class LotController extends Controller
 {
     function add_lot(request $request)
     {
-        $data['category'] = tbl_auction_category::all();
-        $data['auctions'] = tbl_auction::select('title', 'id')->get();
+        $data['category'] = AuctionCategory::all();
+        $data['auctions'] = Auction::select('title', 'id')->get();
         return view('lot.add_lot', $data);
     }
 
@@ -24,10 +24,10 @@ class lotController extends Controller
     {
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            $path = $file->move(public_path('storage/auction'), $file->getClientOriginalName());
+            $path = $file->move('/usr/share/nginx/html/primeauction/public/storage/auction/', $file->getClientOriginalName());
             $request->img = 'storage/auction/' . $path->getFilename();
         }
-        $lot = tbl_lot::create([
+        $lot = Lot::create([
             'enc_id' => md5(date('Y-m-d H:i:s')),
             'auction_id' => $request->auction_id,
             'lot_num' => $request->lot_num,
@@ -57,9 +57,9 @@ class lotController extends Controller
 
     function lot_edit(request $request, $id)
     {
-        $data['lot'] = tbl_lot::where('enc_id', $id)->firstOrFail()->toArray();
-        $data['auctions'] = tbl_auction::select('title', 'id')->get();
-        $data['category'] = tbl_auction_category::all();
+        $data['lot'] = Lot::where('enc_id', $id)->firstOrFail()->toArray();
+        $data['auctions'] = Auction::select('title', 'id')->get();
+        $data['category'] = AuctionCategory::all();
 
         return view('lot.edit_lot', $data);
 
@@ -69,10 +69,10 @@ class lotController extends Controller
     {
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            $path = $file->move(public_path('storage/auction'), $file->getClientOriginalName());
-            $request->img = 'storage/auction/' . $path->getFilename();
+            $path = $file->move('/usr/share/nginx/html/primeauction/public/storage/auction/', $file->getClientOriginalName());
+            $request->img = '/usr/share/nginx/html/primeauction/public/storage/auction/' . $path->getFilename();
         }
-        $lot = tbl_lot::firstOrFail()->where('enc_id', $slug)->first();
+        $lot = Lot::firstOrFail()->where('enc_id', $slug)->first();
         if (!$lot) {
             die('No Lot found');
         }
@@ -101,7 +101,7 @@ class lotController extends Controller
     }
     function BulkUploadsLots(request $request)
     {
-        $data['auctions'] = tbl_auction::select('title', 'id')->get();
+        $data['auctions'] = Auction::select('title', 'id')->get();
         return view('lot.bulk_add_lots', $data);
     }
     function post_bulk_lots(request $request)
@@ -133,7 +133,7 @@ class lotController extends Controller
             $img = isset($imagePaths[$rowIndex - 1]) ? $imagePaths[$rowIndex - 1] : 'null';
             echo $img;
             echo "<br>";
-            tbl_lot::create([
+            Lot::create([
                 'enc_id' => md5(date('Y-m-d H:i:s')),
                 'auction_id' => $auction_id,
                 'lot_num' => trim($columns[0]),
@@ -207,7 +207,7 @@ class lotController extends Controller
 
     function lot_list(request $request)
     {
-        $data['lots'] = tbl_lot::all()->toArray();
+        $data['lots'] = Lot::all()->toArray();
         return view('lot.lot_list', $data);
     }
 }

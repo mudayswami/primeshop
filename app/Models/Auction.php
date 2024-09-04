@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class tbl_lot extends Model
+class Auction extends Model
 {
     use HasFactory;
 
-    protected $table = "tbl_lot";
-
-
+    protected $table = 'tbl_auction';
     protected $guarded = [];
-    public function auction(){
-        return $this->belongsTo(tbl_auction::class,'auction_id');
+
+    public function lots(){
+        return $this->hasMany(Lot::class,'auction_id');
     }
+    
 }
