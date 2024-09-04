@@ -23,8 +23,9 @@ class AuctionController extends Controller
     {
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            $path = Storage::disk('primeauction')->put('storage/auction/' . $file->getClientOriginalName(), $file);
-            $request->img = $path;
+            // $path = Storage::disk('primeauction')->put('storage/auction/' . $file->getClientOriginalName(), $file);
+            // $request->img = $path;
+            $request->img = 'storage/auction/' . $file->getClientOriginalName();
         }
         $auction = Auction::create([
             'enc_id' => md5(date('Y-m-d H:i:s')),
@@ -124,8 +125,9 @@ class AuctionController extends Controller
             }
 
             $newImageName = uniqid() . '.' . $extension;
-            $p = Storage::disk('primeauction')->put('storage/auction/' . $newImageName, $imageContents);
-            $imagePaths[$rowIndex - 1] = $p;
+            // $p = Storage::disk('primeauction')->put('storage/auction/' . $newImageName, $imageContents);
+            // $imagePaths[$rowIndex - 1] = $p;
+            $imagePaths[$rowIndex - 1] = 'storage/auction/' . $newImageName;
         }
 
         return $imagePaths;
@@ -161,8 +163,9 @@ class AuctionController extends Controller
     {
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            $path = Storage::disk('primeauction')->put('storage/auction/' . $file->getClientOriginalName(), $file);
-            $request->img = $path;    
+            // $path = Storage::disk('primeauction')->put('storage/auction/' . $file->getClientOriginalName(), $file);
+            // $request->img = $path;    
+            $request->img = 'storage/auction/' . $file->getClientOriginalName();
         }
         $auction = Auction::find($slug);
         if (!$auction) {
