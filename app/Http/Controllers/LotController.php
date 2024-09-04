@@ -170,7 +170,7 @@ class LotController extends Controller
         foreach ($sheet->getDrawingCollection() as $drawing) {
             $coordinates = $drawing->getCoordinates();
             $rowIndex = $sheet->getCell($coordinates)->getRow();
-
+            $originalFilename = "";
             if ($drawing instanceof \PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing) {
                 ob_start();
                 call_user_func(
@@ -184,11 +184,22 @@ class LotController extends Controller
                 $path = $drawing->getPath();
                 $imageContents = file_get_contents($path);
                 $extension = pathinfo($path, PATHINFO_EXTENSION);
+                $originalFilename = pathinfo($path, PATHINFO_BASENAME);
             }
 
             $newImageName = uniqid() . '.' . $extension;
-            $p = Storage::disk('primeauction')->put('storage/auction/' . $newImageName, $imageContents);
-            $imagePaths[$rowIndex - 1] = $p;
+            // $p = Storage::disk('primeauction')->put('storage/auction/' . $newImageName, $imageContents);
+            // $imagePaths[$rowIndex - 1] = $p;
+            $imagePaths[$rowIndex - 1] = 'storage/auction/' . $originalFilename;
+
+
+
+
+            $path = $drawing->getPath();
+            $imageContents = file_get_contents($path);
+            $extension = pathinfo($path, PATHINFO_EXTENSION);
+            
+            // Extract the original file name
         }
 
         return $imagePaths;
