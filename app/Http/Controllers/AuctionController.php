@@ -23,9 +23,12 @@ class AuctionController extends Controller
     {
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            // $path = Storage::disk('primeauction')->put('storage/auction/' . $file->getClientOriginalName(), $file);
-            // $request->img = $path;
-            $request->img = 'storage/auction/' . $file->getClientOriginalName();
+            $postFields = [
+                'path' =>'storage/auction/',
+                'image' =>  curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
+            ]  ;
+            $path = $this->postApi('image-upload',$postFields);  
+            $request->img = $path['storage_path'];
         }
         $auction = Auction::create([
             'enc_id' => md5(date('Y-m-d H:i:s')),
@@ -125,9 +128,12 @@ class AuctionController extends Controller
             }
 
             $newImageName = uniqid() . '.' . $extension;
-            // $p = Storage::disk('primeauction')->put('storage/auction/' . $newImageName, $imageContents);
-            // $imagePaths[$rowIndex - 1] = $p;
-            $imagePaths[$rowIndex - 1] = 'storage/auction/' . $newImageName;
+            $postFields = [
+                'path' =>'storage/auction/',
+                'image' =>  curl_file_create($imageContents->getPathname(), $imageContents->getMimeType(), $imageContents->getClientOriginalName()),
+            ]  ;
+            $path = $this->postApi('image-upload',$postFields);  
+            $imagePaths[$rowIndex - 1] = $path['storage_path'];
         }
 
         return $imagePaths;
@@ -163,9 +169,12 @@ class AuctionController extends Controller
     {
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            // $path = Storage::disk('primeauction')->put('storage/auction/' . $file->getClientOriginalName(), $file);
-            // $request->img = $path;    
-            $request->img = 'storage/auction/' . $file->getClientOriginalName();
+            $postFields = [
+                'path' =>'storage/auction/',
+                'image' =>  curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
+            ]  ;
+            $path = $this->postApi('image-upload',$postFields);  
+            $request->img = $path['storage_path'];
         }
         $auction = Auction::find($slug);
         if (!$auction) {

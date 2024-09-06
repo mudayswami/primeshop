@@ -24,10 +24,12 @@ class LotController extends Controller
     {
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            $path = Storage::disk('primeauction')->put('storage/auction/' . $file->getClientOriginalName(), $file);
-            // $path = $file->move('/usr/share/nginx/html/primeauction/public/storage/auction/', $file->getClientOriginalName());
-            $path = Storage::disk('primeauction')->put('storage/auction/' . $file->getClientOriginalName(), $file);
-            $request->img = $path;
+            $postFields = [
+                'path' =>'storage/auction/',
+                'image' =>  curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
+            ]  ;
+            $path = $this->postApi('image-upload',$postFields);  
+            $request->img = $path['storage_path'];
         }
         $lot = Lot::create([
             'enc_id' => md5(date('Y-m-d H:i:s')),
@@ -71,9 +73,12 @@ class LotController extends Controller
     {
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            // $path = $file->move('/usr/share/nginx/html/primeauction/public/storage/auction/', $file->getClientOriginalName());
-            $path = Storage::disk('primeauction')->put('storage/auction/' . $file->getClientOriginalName(), $file);
-            $request->img = $path;
+            $postFields = [
+                'path' =>'storage/auction/',
+                'image' =>  curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
+            ]  ;
+            $path = $this->postApi('image-upload',$postFields);  
+            $request->img = $path['storage_path'];
         }
         $lot = Lot::firstOrFail()->where('enc_id', $slug)->first();
         if (!$lot) {
@@ -188,9 +193,12 @@ class LotController extends Controller
             }
 
             $newImageName = uniqid() . '.' . $extension;
-            // $p = Storage::disk('primeauction')->put('storage/auction/' . $newImageName, $imageContents);
-            // $imagePaths[$rowIndex - 1] = $p;
-            $imagePaths[$rowIndex - 1] = 'storage/auction/' . $originalFilename;
+            $postFields = [
+                'path' =>'storage/auction/',
+                'image' =>  curl_file_create($imageContents->getPathname(), $imageContents->getMimeType(), $imageContents->getClientOriginalName()),
+            ]  ;
+            $path = $this->postApi('image-upload',$postFields);  
+            $imagePaths[$rowIndex - 1] = $path['storage_path'];;
 
 
 
@@ -199,7 +207,6 @@ class LotController extends Controller
             $imageContents = file_get_contents($path);
             $extension = pathinfo($path, PATHINFO_EXTENSION);
             
-            // Extract the original file name
         }
 
         return $imagePaths;
