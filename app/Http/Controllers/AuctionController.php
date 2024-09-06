@@ -130,7 +130,7 @@ class AuctionController extends Controller
             $newImageName = uniqid() . '.' . $extension;
             $postFields = [
                 'path' =>'storage/auction/',
-                'image' =>  curl_file_create($path, getMimeType($path), $imageContents->getClientOriginalName($path)),
+                'image' =>  curl_file_create($path, mime_content_type($path), basename($path)),
             ]  ;
             $path = $this->postApi('image-upload',$postFields);  
             $imagePaths[$rowIndex - 1] = $path['storage_path'];
