@@ -3,7 +3,9 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\LotController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -43,4 +45,6 @@ Route::get('lot-list',[LotController::class,'lot_list']);
 Route::get('bulk-upload-lots',[LotController::class,'BulkUploadsLots']);
 Route::post('bulk-add-lots',[LotController::class,'post_bulk_lots']);
 // End Lots
+
+Route::get('login',[UserController::class,'login']);
 
