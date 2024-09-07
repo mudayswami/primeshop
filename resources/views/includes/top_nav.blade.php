@@ -2,7 +2,7 @@
                 <div class="main-header-logo">
                     <!-- Logo Header -->
                     <div class="logo-header" data-background-color="dark">
-                        <a href="index.html" class="logo">
+                        <a href="" class="logo">
                             <img src="{{url('assets/img/kaiadmin/logo_light.svg')}}" alt="navbar brand" class="navbar-brand"
                                 height="20" />
                         </a>
@@ -256,7 +256,7 @@
                                     </div>
                                     <span class="profile-username">
                                         <span class="op-7">Hi,</span>
-                                        <span class="fw-bold">Anubhav</span>
+                                        <span class="fw-bold">{{session('user_data')['first_name']}}</span>
                                     </span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -268,9 +268,9 @@
                                                         class="avatar-img rounded" />
                                                 </div>
                                                 <div class="u-text">
-                                                    <h4>Hizrian</h4>
-                                                    <p class="text-muted">hello@example.com</p>
-                                                    <a href="profile.html" class="btn btn-xs btn-secondary btn-sm">View
+                                                    <h4>{{session('user_data')['first_name']}}</h4>
+                                                    <p class="text-muted">{{session('user_data')['email']}}</p>
+                                                    <a href="" class="btn btn-xs btn-secondary btn-sm">View
                                                         Profile</a>
                                                 </div>
                                             </div>
@@ -283,7 +283,7 @@
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="#">Account Setting</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Logout</a>
+                                            <a class="dropdown-item" href="{{url('logout')}}">Logout</a>
                                         </li>
                                     </div>
                                 </ul>

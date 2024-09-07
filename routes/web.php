@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
+Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/',[DashboardController::class,'dashboard']);
 
 // Auction
@@ -45,6 +45,11 @@ Route::get('lot-list',[LotController::class,'lot_list']);
 Route::get('bulk-upload-lots',[LotController::class,'BulkUploadsLots']);
 Route::post('bulk-add-lots',[LotController::class,'post_bulk_lots']);
 // End Lots
+});
 
-Route::get('login',[UserController::class,'login']);
 
+Route::get('login',[UserController::class,'login'])->name('login');
+Route::get('logout',[UserController::class,'logout']);
+Route::post('login',[UserController::class,'postLogin']);
+Route::get('register',[UserController::class,'register']);
+Route::post('register',[UserController::class,'postRegister']);
