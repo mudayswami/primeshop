@@ -25,7 +25,7 @@ class LotController extends Controller
         if ($request->hasFile('img')) {
             $file = $request->file('img');
             $postFields = [
-                'path' =>'storage/auction/',
+                'path' =>'storage/auction',
                 'image' =>  curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
             ]  ;
             $path = $this->postApi('image-upload',$postFields);  
@@ -74,7 +74,7 @@ class LotController extends Controller
         if ($request->hasFile('img')) {
             $file = $request->file('img');
             $postFields = [
-                'path' =>'storage/auction/',
+                'path' =>'storage/auction',
                 'image' =>  curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
             ]  ;
             $path = $this->postApi('image-upload',$postFields);  
@@ -194,7 +194,7 @@ class LotController extends Controller
 
             $newImageName = uniqid() . '.' . $extension;
             $postFields = [
-                'path' =>'storage/auction/',
+                'path' =>'storage/auction',
                 'image' =>  curl_file_create($path, mime_content_type($path), basename($path)),
             ]  ;
             $path = $this->postApi('image-upload',$postFields);  
