@@ -139,6 +139,32 @@
                             </div>
                         </li>
                         <li class="nav-item">
+                            <a data-bs-toggle="collapse" href="#product">
+                                <i class="fas fa-th-list"></i>
+                                <p>Product</p>
+                                <span class="caret"></span>
+                            </a>
+                            <div class="collapse" id="product">
+                                <ul class="nav nav-collapse">
+                                <li>
+                                        <a href="{{url('product-list')}}">
+                                            <span class="sub-item">Products Listing</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{url('add-product')}}">
+                                            <span class="sub-item">Add Product</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{url('bulk-upload-product')}}">
+                                            <span class="sub-item">Add Bulk Product</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
                             <a data-bs-toggle="collapse" href="#tables">
                                 <i class="fas fa-table"></i>
                                 <p>Bidding</p>

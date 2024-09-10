@@ -45,15 +45,13 @@ class UserController extends Controller
 
 
     function postLogin(Request $request){
-
-
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
+            $user_data['id']            = $user->id;
             $user_data['first_name']    = $user->first_name;
             $user_data['last_name']     = $user->last_name;
             $user_data['email']         = $user->email;
             session()->put('user_data', $user_data);
-
             return redirect('/');
         } else {
             return back()->withErrors("Email or Password doesn't match");
@@ -63,8 +61,6 @@ class UserController extends Controller
 
 
     function logout(Request $request){
-
-
         Auth::logout();
         $request->session()->flush();
         $request->session()->regenerate();

@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuctionController;
 use App\Http\Controllers\LotController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +46,20 @@ Route::get('lot-list',[LotController::class,'lot_list']);
 Route::get('bulk-upload-lots',[LotController::class,'BulkUploadsLots']);
 Route::post('bulk-add-lots',[LotController::class,'post_bulk_lots']);
 // End Lots
+
+
+// Products starts
+
+Route::get('add-product',[ProductController::class,'addProduct']);
+Route::post('add-product',[ProductController::class,'postProduct']);
+Route::get('product/edit/{slug}',[ProductController::class,'productEdit']);
+Route::post('update-product/{slug}',[ProductController::class,'updateProduct']);
+Route::get('product-list',[ProductController::class,'productList']);
+Route::get('bulk-upload-product',[ProductController::class,'bulkUploadsProducts']);
+Route::post('bulk-add-products',[ProductController::class,'postBulkProduct']);
+
+// End Products
+
 });
 
 

@@ -18,3 +18,4 @@ yarn-error.log
 /.idea
 /.vscode
 /config
+/app/Http/Controllers/Controller.php
