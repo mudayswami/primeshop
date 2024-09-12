@@ -6,7 +6,7 @@
     <title>Prime Shop</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
     <meta name="csrf-token" content="{{csrf_token()}}">
-    <link rel="icon" href="{{url('assets/img/logobg.png')}}"" type="image/x-icon" />
+    <link rel="icon" href="{{url('assets/img/logobg.png')}}"" type=" image/x-icon" />
     <!-- Fonts and icons -->
     <script src="{{url('assets/js/plugin/webfont/webfont.min.js')}}"></script>
     <script>
@@ -45,7 +45,7 @@
 
         <div class="main-panel">
             @include('includes.top_nav')
-            
+
             @stack('content')
             @include('includes.footer')
         </div>
@@ -85,6 +85,44 @@
 
     <!-- Kaiadmin JS -->
     <script src="{{url('assets/js/custom-min.min.js')}}"></script>
+    <script>
+        function filterSidebar() {
+            let searchInput = document.getElementById('sidebar-search-input').value.toLowerCase();
+            let sidebarLinks = document.querySelectorAll('li.nav-item');
+            sidebarLinks.forEach(function (link) {
+                let linkText = link.textContent.toLowerCase();
+                console.log(link);
+                if (linkText.includes(searchInput)) {
+                    link.style.display = '';
+                } else {
+                    link.style.display = 'none';
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let currentUrl = window.location.href;
+            let sidebarLinks = document.querySelectorAll(' ul.nav-collapse li');
+            sidebarLinks.forEach(function (li) {
+                let link = li.querySelector('a');
+
+                if (link && link.href === currentUrl) {
+                    console.log(link.href);
+                    li.classList.add('active');
+                    let parentNavItem = li.closest('li.nav-item');
+                    if (parentNavItem) {
+                        parentNavItem.classList.add('active', 'submenu');
+                    }
+                    let parentCollapse = li.closest('.collapse');
+                    if (parentCollapse) {
+                        parentCollapse.classList.add('show');
+                        parentCollapse.classList.remove('collapse');
+                    }
+                }
+            });
+        });
+
+    </script>
     @stack('scripts')
 </body>
 

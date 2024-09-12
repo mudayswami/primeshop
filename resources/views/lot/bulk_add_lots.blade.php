@@ -79,7 +79,7 @@
                                 <div class="form-group col-lg-4">
                                     <label class="h1" for="file">Check this dummy File</label>
                                     <a class="form-control h3"
-                                        href="{{url('storage/lot/lots_bulk_upload.xlsx')}}"><u><b>Demo File</b></u></a>
+                                        href="{{url('storage/lot/lot_bulk.xlsx')}}"><u><b>Demo File</b></u></a>
                                 </div>
                             </div>
                         </div>

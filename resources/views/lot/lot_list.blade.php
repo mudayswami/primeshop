@@ -72,7 +72,7 @@
                                                         <td>{{$value['condition']}}</td>
                                                         <td>{{($value['category'])}}</td>
                                                         <td>{{$value['ship_info']}}</td>
-                                                        <td><a href="{{url('lot/edit/'.$value['enc_id'])}}"><div class="btn btn-primary btn-sm">Edit</div></a> <a id="del_{{$value['enc_id']}}" onclick="del({{$value['enc_id']}})"><div class="btn btn-sm btn-danger">Delete</div></a></td>
+                                                        <td><a href="{{url('lot/edit/'.$value['id'])}}"><div class="btn btn-primary btn-sm">Edit</div></a> <a id="del_{{$value['id']}}" onclick="del({{$value['id']}})"><div class="btn btn-sm btn-danger">Delete</div></a></td>
                                                     </tr>
                                         @endforeach
                                     </tbody>
@@ -98,68 +98,90 @@
         });
 
         function del(e) {
-                var id = e;
-            if(id == null){
-                alert("No id");
-                return false;
-            }
-            $.ajax({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            swal({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                type: "warning",
+                buttons: {
+                    cancel: {
+                        visible: true,
+                        text: "No, cancel!",
+                        className: "btn btn-danger",
+                    },
+                    confirm: {
+                        text: "Yes, delete it!",
+                        className: "btn btn-success",
+                    },
                 },
-                url: "{{url('delete-auction')}}"+"/"+id,
-                type: 'post',
-                success: function (result) {
-
-                    
-                    if(result == 1){
-                        var content = {};
-                        content.message ='Auction Deleted successfully';
-                        content.title = "Delete Auction";
-                        
-                            content.icon = "fa fa-bell";
-                        
-                        content.url = location.href;
-
-                        $.notify(content, {
-                            type: 'success',
-                            placement: {
-                                from: 'top',
-                                align: 'right',
-                            },
-                            time: 1000,
-                            delay: 0,
-                        });
-
-                        var button = document.getElementById('del_'+id);
-                        var parentRow = button.closest('tr');
-
-                        if (parentRow) {
-                            parentRow.classList.add('d-none');
-                        } else {
-                            console.log('No parent <tr> found');
-                        }
-                    }else{
-                        var content = {};
-                        content.message ='No auction Found';
-                        content.title = "Delete Auction";
-                        
-                            content.icon = "fa fa-bell";
-                        
-                        content.url = location.href;
-
-                        $.notify(content, {
-                            type: 'danger',
-                            placement: {
-                                from: 'top',
-                                align: 'right',
-                            },
-                            time: 1000,
-                            delay: 0,
-                        });
-
-                        
+            }).then((willDelete) => {
+                if (willDelete) {
+                    var id = e;
+                    if (id == null) {
+                        alert("No id");
+                        return false;
                     }
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "{{url('delete-lot')}}" + "/" + id,
+                    type: 'post',
+                    success: function (result) {
+
+
+                        if (result == 1) {
+                            var content = {};
+                            content.message = 'Lot Deleted successfully';
+                            content.title = "Delete Lot";
+
+                            content.icon = "fa fa-bell";
+
+                            content.url = location.href;
+
+                            $.notify(content, {
+                                type: 'success',
+                                placement: {
+                                    from: 'top',
+                                    align: 'right',
+                                },
+                                time: 1000,
+                                delay: 2000,
+                            });
+
+                            var button = document.getElementById('del_' + id);
+                            var parentRow = button.closest('tr');
+
+                            if (parentRow) {
+                                parentRow.classList.add('d-none');
+                            } else {
+                                console.log('No parent <tr> found');
+                            }
+                        } else {
+                            var content = {};
+                            content.message = 'No Lot Found';
+                            content.title = "Delete Lot";
+
+                            content.icon = "fa fa-bell";
+
+                            content.url = location.href;
+
+                            $.notify(content, {
+                                type: 'danger',
+                                placement: {
+                                    from: 'top',
+                                    align: 'right',
+                                },
+                                time: 1000,
+                                delay: 2000,
+                            });
+
+
+                        }
+
+                    }
+                });
+        
+                } else {
                     
                 }
             });

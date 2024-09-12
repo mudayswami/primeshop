@@ -57,12 +57,12 @@
                                     <tbody>
                                         @foreach ($bids as $key => $value)
                                                     <tr class="@if($key % 2 == 0) odd @else even @endif">
-                                                        <td ><a href="{{url('lot/edit/'.$value->lot)}}">{{$value->title}}</a></td>
+                                                        <td ><a href="{{url('lot/edit/'.$value->enc_id)}}">{{$value->title}}</a></td>
                                                         <td>{{$value->first_name}} {{$value->last_name}}</td>
                                                         <td>£ {{$value->bid_amount}}</td>
                                                         <td>{{date('d M Y H:i:s' ,strtotime($value->created_at))}}</td>
                                                         <td>
-                                                        <select class="status" name="status" id="" >
+                                                        <select class="status" name="status" id="" onchange="updatestatus(this)" data-item-id="{{$value->id}}">
                                                             <option value="won" {{($value->status == 'won' ) ? 'selected' : '' }} >Won</option>
                                                             <option value="lost" {{($value->status == 'lost' ) ? 'selected' : '' }} >Lost</option>
                                                             <option value="outbid" {{($value->status == 'outbid') ? 'selected' : '' }} >Outbid</option>
@@ -98,45 +98,26 @@ $(document).ready(function() {
         $('.status').select2();
     });
 
-        function approve(id) {
-            if(id === null){
-                alert("No id");
-                return false;
-            }
-            
-            var status = $('#approve_'+id).attr('approve');
-            if(status == 0){
-                approve_status = 1;
 
-            }else{
-                approve_status = 0;
-            }
-            $('#approve_'+id).html('...');
-            $.ajax({
+    function updatestatus(e) {
+    var status = e.value;
+
+    var itemId = e.getAttribute('data-item-id');
+
+    $.ajax({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url : "{{url('auction-approve')}}",
+                url : "{{url('update-status')}}/"+itemId,
                 type : 'post',
-                data : {'id': id, 'status': approve_status},
-                success: function (result) {
+                data : {'id': itemId, 'status': status},
+                success: function (data) {
 
-                    
-                    if(result == 1){
-                    $('#approve_'+id).attr('approve',1);
-                    $('#approve_'+id).html('Unapprove');
-                    $('#badge_'+id).html('Approved');
-                    $('#badge_'+id).removeClass('bg-success');
-                    $('#badge_'+id).removeClass('bg-secondary');
-                    $('#badge_'+id).addClass('bg-success');
+                    if (data.success) {
                         var content = {};
-                        content.message ='Auction Approved successfully';
-                        content.title = "Auction Approved";
+                        content.message ='Bid Updated successfully';
+                        content.title = "Bid Update";
                         
-                            content.icon = "fa fa-bell";
-                        
-                        // content.url = location.href;
-
                         $.notify(content, {
                             type: 'success',
                             placement: {
@@ -144,38 +125,30 @@ $(document).ready(function() {
                                 align: 'right',
                             },
                             time: 1000,
-                            delay: 0,
+                            delay: 2000,
                         });
-                    }else{
-                    $('#approve_'+id).attr('approve',0);
-                $('#approve_'+id).html('Approve');
-                    $('#badge_'+id).html('Unapproved');
-                    $('#badge_'+id).removeClass('bg-success');
-                    $('#badge_'+id).removeClass('bg-secondary');
-                    $('#badge_'+id).addClass('bg-secondary');
-                        var content = {};
-                        content.message ='Auction Unapproved Successfully';
-                        content.title = "Auction Unapproved";
-                        
-                            content.icon = "fa fa-bell";
-                        
-                        // content.url = location.href;
-
-                        $.notify(content, {
-                            type: 'warning',
+        } else {
+            var content = {};
+                        content.message ='Bid Updation Failed ';
+                        content.title = "Bid Update Failed";
+            $.notify(content, {
+                            type: 'danger',
                             placement: {
                                 from: 'top',
                                 align: 'right',
                             },
                             time: 1000,
-                            delay: 0,
+                            delay: 2000,
                         });
-
-                        
-                    }
-                    
-                }
-            });
         }
+    }
+                    
+
+            });
+    }
+
+
+
+
     </script>
 @endpush

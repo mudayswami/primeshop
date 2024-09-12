@@ -18,7 +18,19 @@ class ProductController extends Controller
     }
 
     function postProduct(request $request)
-    {
+    {   
+        $request->validate([
+            'brand' => 'required',
+            'title' => 'required',
+            'description' => 'required|string',  
+            'department' => 'required',     
+            'condition' => 'required', 
+            'option' => 'required',        
+            'original_price' => 'required', 
+            'discount_price' => 'required', 
+            'discount_percentage' => 'required', 
+            'stock' => 'required',  
+        ]);
         if ($request->hasFile('img')) {
             $file = $request->file('img');
             $postFields = [
@@ -28,13 +40,15 @@ class ProductController extends Controller
             $path = $this->postApi('image-upload',$postFields);  
             $request->img = $path['storage_path'];
         }
+        
+        $department = explode(",",$request->department);
         $option = explode(",",$request->option);
         $product = Product::create([
             'brand' => $request->brand,
             'title' => $request->title,
             'description' => $request->description,
             'img' => $request->img,
-            'department' => json_encode($request->department),
+            'department' => json_encode($department),
             'condition' => $request->condition,
             'options' => json_encode($option),
             'original_price' => $request->original_price,
@@ -50,16 +64,26 @@ class ProductController extends Controller
 
     function productEdit(request $request, $id)
     {
-        $data['lot'] = Lot::where('enc_id', $id)->firstOrFail()->toArray();
-        $data['auctions'] = Auction::select('title', 'id')->get();
-        $data['category'] = AuctionCategory::all();
-
-        return view('lot.edit_lot', $data);
+        $data['product'] = Product::findOrFail($id);
+        $data['category'] = AuctionCategory::getActiveCategories();
+        return view('product.editProduct', $data);
 
     }
 
     function updateProduct(request $request, $slug)
-    {
+    {   
+        $request->validate([
+            'brand' => 'required',
+            'title' => 'required',
+            'description' => 'required|string',  
+            'department' => 'required',     
+            'condition' => 'required', 
+            'option' => 'required',        
+            'original_price' => 'required', 
+            'discount_price' => 'required', 
+            'discount_percentage' => 'required', 
+            'stock' => 'required',  
+        ]);
         if ($request->hasFile('img')) {
             $file = $request->file('img');
             $postFields = [
@@ -69,32 +93,26 @@ class ProductController extends Controller
             $path = $this->postApi('image-upload',$postFields);  
             $request->img = $path['storage_path'];
         }
-        $lot = Product::firstOrFail()->where('enc_id', $slug)->first();
-        if (!$lot) {
-            die('No Lot found');
+        $product = Product::firstOrFail('id',$slug);
+        if (!$product) {
+            die('No Product found');
         }
-        $lot->auction_id = $request->auction_id;
-        $lot->lot_num = $request->lot_num;
-        $lot->title = $request->title;
-        $lot->description = $request->description;
-        $lot->img = $request->img;
-        $lot->category = json_encode($request->category);
-        $lot->condition = $request->condition;
-        $lot->dimension = $request->dimension;
-        $lot->start_bid = $request->start_bid;
-        $lot->next_bid = $request->next_bid;
-        $lot->reserve_bid = $request->reserve_bid;
-        $lot->buyer_premium = $request->buyer_premium;
-        $lot->store_price = $request->store_price;
-        $lot->ship_info = $request->ship_info;
-        $lot->ship_cost = $request->ship_cost;
-        $lot->ship_restriction = $request->ship_restriction;
-        $lot->pickup = $request->pickup;
-        $lot->pickup_address = $request->pickup_address;
-        $lot->pickup_instruction = $request->pickup_instruction;
-        $lot->notes = $request->notes;
-        $lot->save();
-        return redirect('lot-list');
+        $option = explode(",",$request->option);
+        $product->brand = $request->brand;
+        $product->title = $request->title;
+        $product->description = $request->description;
+        $product->img = $request->img;
+        $product->department = json_encode($request->department);
+        $product->options = json_encode($option);
+        $product->original_price = $request->original_price;
+        $product->discount_price = $request->discount_price;
+        $product->discount_percentage = $request->discount_percentage;
+        $product->stock = $request->stock;
+        $product->featured = $request->featured;
+        $product->author = session('user_data')['id'];
+        
+        $product->save();
+        return redirect('product-list');
     }
     function bulkUploadsProducts(request $request)
     {

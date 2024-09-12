@@ -10,7 +10,7 @@
     <div class="container">
         <div class="page-inner">
             <div class="page-header">
-                <h4 class="page-title">Add Auction</h4>
+                <h4 class="page-title">Dashboard</h4>
                 <ul class="breadcrumbs">
                     <li class="nav-home">
                         <a href="#">
@@ -72,11 +72,16 @@
                                         <tbody>
                                             @foreach ($category as $key => $value)
                                                 <tr>
+                                                    <form action="{{url('update-category').'/'.$value->id}}" method="post">
+                                                        @csrf
                                                     <td>{{$key + 1}}</td>
-                                                    <td>{{$value->category}}</td>
+                                                    <td><input name="category" value="{{$value->category}}"/></td>
                                                     <td>@if($value->status==1)<span class="badge rounded-pill bg-success">Active</span>@else <span class="badge rounded-pill bg-danger">Inactive</span>
                                                     @endif</td>
-                                                    <td></td>
+                                                    <td><button class="btn btn-success" type="submit" id="">Update</button>
+                                                    <a href="{{url('delete-category').'/'.$value->id}}"><button class="btn btn-danger" type="button" id="">Delete</button></a>
+                                                </td>
+                                                </form>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -140,7 +145,7 @@
                                 align: 'right',
                             },
                             time: 1000,
-                            delay: 0,
+                            delay: 2000,
                         });
                         location.href =location.href;
                     // });

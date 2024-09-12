@@ -250,8 +250,33 @@ class AuctionController extends Controller
     function bids(Request $request){
 
         $data['bids'] = Bids::join('tbl_lot','bids.lot','=','tbl_lot.id')->join('user','user.user_id','=','bids.user_id')
-        ->select('bids.*','tbl_lot.title','user.first_name','user.last_name')->get();
+        ->select('bids.*','tbl_lot.enc_id','tbl_lot.title','user.first_name','user.last_name')->get();
         return view('auction.bids',$data);
+    }
+    
+    public function updateStatus(Request $request, $id)
+{
+    $request->validate([
+        'status' => 'required|in:won,lost,outbid,leading,withdrawn', 
+    ]);
+    $item = Bids::find($id);
+    if (!$item) {
+        return response()->json(['success' => false, 'message' => 'Item not found'], 404);
+    }
+    $item->status = $request->status;
+    $item->save();
+
+    return response()->json(['success' => true, 'message' => 'Status updated successfully']);
+}
+    function updateCategory(Request $request, $id){
+        $category = AuctionCategory::find($id)->first();
+        $category->category = $request->category;
+        $category->save();
+        return redirect('add-auction-category')->with('success', 'Category Update successfully.');;
+    }
+    function deleteCategory(Request $request, $id){
+        $category = AuctionCategory::destroy($id);
+        return redirect('add-auction-category')->with('success', 'Category deleted successfully.');;
     }
 
 }

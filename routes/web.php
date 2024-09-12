@@ -33,13 +33,17 @@ Route::get('add-auction-category',[AuctionController::class,'add_category']);
 Route::post('add-auction-category',[AuctionController::class,'post_category']);
 Route::get('approve-bidding',[AuctionController::class,'approveBiding']);
 Route::get('bids',[AuctionController::class,'bids']);
+Route::post('update-status/{id}', [AuctionController::class, 'updateStatus']);
 Route::post('auction-approve',[AuctionController::class,'auctionApprove']);
+Route::post('update-category/{id}',[AuctionController::class,'updateCategory']);
+Route::get('delete-category/{id}',[AuctionController::class,'deleteCategory']);
 // End Auction
 
 
 // Lots
 Route::get('add-lot',[LotController::class,'add_lot']);
 Route::post('add-lot',[LotController::class,'post_lot']);
+Route::post('delete-lot/{slug}',[LotController::class,'deletelot']);
 Route::get('lot/edit/{slug}',[LotController::class,'lot_edit']);
 Route::post('update-lot/{slug}',[LotController::class,'update_lot']);
 Route::get('lot-list',[LotController::class,'lot_list']);
@@ -66,5 +70,5 @@ Route::post('bulk-add-products',[ProductController::class,'postBulkProduct']);
 Route::get('login',[UserController::class,'login'])->name('login');
 Route::get('logout',[UserController::class,'logout']);
 Route::post('login',[UserController::class,'postLogin']);
-Route::get('register',[UserController::class,'register']);
+Route::get('register/signup',[UserController::class,'register']);
 Route::post('register',[UserController::class,'postRegister']);

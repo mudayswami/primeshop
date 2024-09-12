@@ -41,41 +41,53 @@
     <body class="login">
         <div class="wrapper wrapper-login">
             <div class="container-signup d-block">
-                
+
                 <h3>Create an Account</h3>
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <form action="{{url('register')}}" method="POST">
                     @csrf
                     <div class="form-group">
                         <label for="first_name">First Name</label>
-                        <input type="text" id="first_name" name="first_name" class="form-control" required>
+                        <input type="text" id="first_name" name="first_name" class="form-control"
+                            value="{{ old('first_name') }}" required>
                     </div>
                     <div class="form-group">
                         <label for="last_name">Last Name</label>
-                        <input type="text" id="last_name" name="last_name" class="form-control" required>
+                        <input type="text" id="last_name" name="last_name" class="form-control" required
+                            value="{{ old('last_name') }}">
                     </div>
                     <div class="form-group">
                         <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
+                        <input type="email" id="email" name="email" class="form-control" required
+                            value="{{ old('email') }}">
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" class="form-control" required>
                     </div>
                     <div class="form-group">
-                        <label for="confirm_password">Confirm Password</label>
-                        <input type="password" id="confirm_password" name="confirm_password" class="form-control"
-                            required>
+                        <label for="password_confirmation">Confirm Password</label>
+                        <input type="password" id="password_confirmation" name="password_confirmation"
+                            class="form-control" required>
                     </div>
                     <!-- <div class="form-group">
                     <label class="custom-control-label">
                         <input type="checkbox" name="terms" required> I agree to the Terms and Conditions
                     </label>
                 </div> -->
-                @if ($errors->any())
-                    @foreach ($errors->all() as $error)
-                        <div>{{$error}}</div>
-                    @endforeach
-                @endif
+                    @if ($errors->any())
+                        @foreach ($errors->all() as $error)
+                            <div>{{$error}}</div>
+                        @endforeach
+                    @endif
                     <div class="form-action">
                         <button type="submit" class="btn btn-primary">Register</button>
                     </div>

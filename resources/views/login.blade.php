@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Prime Shop</title>
-    <meta content="width=device-width, initial-scale=1.0", name="viewport" />
+    <meta content="width=device-width, initial-scale=1.0" , name="viewport" />
     <meta name="csrf-token" content="{{csrf_token()}}">
     <link rel="icon" href="{{url('assets/img/logobg.png')}}" type=" image/x-icon" />
     <script src="{{url('assets/js/plugin/webfont/webfont.min.js')}}"></script>
@@ -30,7 +30,7 @@
     <link rel="stylesheet" href="{{url('assets/css/plugins.min.css')}}" />
     <link rel="stylesheet" href="{{url('assets/css/kaiadmin.min.css')}}" />
     <style>
-        .wrapper .wrapper-login{
+        .wrapper .wrapper-login {
             background: #2a2f5bed !important;
         }
     </style>
@@ -42,6 +42,17 @@
             <h3>Login to Your Account</h3>
             <form action="{{url('login')}}" method="POST">
                 @csrf
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                <div class="form-group has-error has-feedback">
+                </div>
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input type="email" id="email" name="email" class="form-control" required>
@@ -50,7 +61,8 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" class="form-control" required>
                 </div>
-                <div class="form-group form-sub">
+
+                <div class="form-group form-sub d-none">
                     <label class="custom-control-label">
                         <input type="checkbox" name="remember"> Remember me
                     </label>
@@ -60,9 +72,7 @@
                     <button type="submit" class="btn btn-primary">Login</button>
                 </div>
             </form>
-            <div class="login-account">
-                <span>Don't have an account? <a href="{{url('register')}}">Register here</a></span>
-            </div>
+            
         </div>
     </div>
     <script src="{{url('assets/js/core/jquery-3.7.1.min.js')}}"></script>

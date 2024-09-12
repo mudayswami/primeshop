@@ -22,12 +22,12 @@ class UserController extends Controller
     }
 
     function postRegister(request $request){
-
+        
         $request->validate([
-            'first_name' => ['required'],
-            'last_name' => ['required'],
-            'email' => ['required'],
-            'password' => ['required'],
+            'first_name' => ['required', 'string', 'max:255'], 
+            'last_name' => ['required', 'string', 'max:255'], 
+            'email' => ['required', 'email', 'unique:admin_user,email', 'max:255'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         $admin = AdminUser::create([
@@ -45,6 +45,7 @@ class UserController extends Controller
 
 
     function postLogin(Request $request){
+
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
             $user_data['id']            = $user->id;
@@ -54,7 +55,7 @@ class UserController extends Controller
             session()->put('user_data', $user_data);
             return redirect('/');
         } else {
-            return back()->withErrors("Email or Password doesn't match");
+            return back()->withErrors(provider: "Email or Password doesn't match");
         }
 
     }

@@ -21,7 +21,17 @@ class LotController extends Controller
     }
 
     function post_lot(request $request)
-    {
+    {   
+        $validated = $request->validate([
+            'auction_id' => 'required|integer',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'img' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'category' => 'required|array',
+            'condition' => 'required|string',
+            'start_bid' => 'required|numeric|min:0',
+            'next_bid' => 'required|numeric|min:0',
+        ]);
         if ($request->hasFile('img')) {
             $file = $request->file('img');
             $postFields = [
@@ -70,7 +80,16 @@ class LotController extends Controller
     }
 
     function update_lot(request $request, $slug)
-    {
+    {   
+        $validated = $request->validate([
+            'auction_id' => 'required|integer',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category' => 'required|array',
+            'condition' => 'required|string',
+            'start_bid' => 'required|numeric|min:0',
+            'next_bid' => 'required|numeric|min:0',
+        ]);
         if ($request->hasFile('img')) {
             $file = $request->file('img');
             $postFields = [
@@ -106,6 +125,17 @@ class LotController extends Controller
         $lot->notes = $request->notes;
         $lot->save();
         return redirect('lot-list');
+    }
+
+    function deleteLot(request $request, $id)
+    {
+        try {
+            $auction = Lot::findOrFail($id);
+            $auction->delete();
+            return 1;
+        } catch (Exception $e) {
+            return 0;
+        }
     }
     function BulkUploadsLots(request $request)
     {

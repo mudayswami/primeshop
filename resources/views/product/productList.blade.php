@@ -126,7 +126,7 @@
                                 align: 'right',
                             },
                             time: 1000,
-                            delay: 0,
+                            delay: 2000,
                         });
 
                         var button = document.getElementById('del_'+id);
@@ -153,7 +153,7 @@
                                 align: 'right',
                             },
                             time: 1000,
-                            delay: 0,
+                            delay: 2000,
                         });
 
                         

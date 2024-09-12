@@ -13,7 +13,8 @@
     <div class="container">
         <div class="page-inner">
             <div class="page-header">
-                <h4 class="page-title">Add Lot</h4>
+                <h4 class="page-title"> Lot</h4>
+                
                 <ul class="breadcrumbs">
                     <li class="nav-home">
                         <a href="#">
@@ -39,7 +40,15 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="card-title">Add Lot</div>
+                                <div class="card-title">Edit Lot</div>@if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                             </div>
                             <div class="card-body">
                                 <form method="post" action="<?php echo url('update-lot/'.$lot['enc_id']); ?>" enctype="multipart/form-data">

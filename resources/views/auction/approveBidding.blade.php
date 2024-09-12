@@ -137,7 +137,7 @@
                                 align: 'right',
                             },
                             time: 1000,
-                            delay: 0,
+                            delay: 2000,
                         });
                     }else{
                     $('#approve_'+id).attr('approve',0);
@@ -161,7 +161,7 @@
                                 align: 'right',
                             },
                             time: 1000,
-                            delay: 0,
+                            delay: 2000,
                         });
 
                         
