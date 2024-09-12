@@ -57,6 +57,7 @@ Route::post('bulk-add-lots',[LotController::class,'post_bulk_lots']);
 Route::get('add-product',[ProductController::class,'addProduct']);
 Route::post('add-product',[ProductController::class,'postProduct']);
 Route::get('product/edit/{slug}',[ProductController::class,'productEdit']);
+Route::post('product/delete/{id}',[ProductController::class,'deleteProduct']);
 Route::post('update-product/{slug}',[ProductController::class,'updateProduct']);
 Route::get('product-list',[ProductController::class,'productList']);
 Route::get('bulk-upload-product',[ProductController::class,'bulkUploadsProducts']);

@@ -87,7 +87,7 @@
                                                 <select multiple="" class="form-control" name="department[]"
                                                     id="department">
                                                     @foreach ($category as $value)
-                                                        <option value="{{$value->category}}"  {{in_array($value->category, explode(',',$product->department)) ? 'selected' : ''}}>{{$value->category}}</option>
+                                                        <option value="{{$value->category}}"  {{in_array($value->category, json_decode($product->department)) ? 'selected' : ''}}>{{$value->category}}</option>
                                                     @endforeach
                                                 </select>
                                             </div>

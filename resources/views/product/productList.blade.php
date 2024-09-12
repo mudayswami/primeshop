@@ -105,15 +105,15 @@
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                url: "{{url('delete-auction')}}"+"/"+id,
+                url: "{{url('product/delete')}}"+"/"+id,
                 type: 'post',
                 success: function (result) {
 
                     
                     if(result == 1){
                         var content = {};
-                        content.message ='Auction Deleted successfully';
-                        content.title = "Delete Auction";
+                        content.message ='Product Deleted successfully';
+                        content.title = "Delete Product";
                         
                             content.icon = "fa fa-bell";
                         
@@ -139,8 +139,8 @@
                         }
                     }else{
                         var content = {};
-                        content.message ='No auction Found';
-                        content.title = "Delete Auction";
+                        content.message ='No product Found';
+                        content.title = "Delete product";
                         
                             content.icon = "fa fa-bell";
                         

@@ -8,6 +8,7 @@ use App\Models\AuctionCategory;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 use Validator;
+use DB;
 use Storage;
 class ProductController extends Controller
 {
@@ -18,31 +19,31 @@ class ProductController extends Controller
     }
 
     function postProduct(request $request)
-    {   
+    {
         $request->validate([
             'brand' => 'required',
             'title' => 'required',
-            'description' => 'required|string',  
-            'department' => 'required',     
-            'condition' => 'required', 
-            'option' => 'required',        
-            'original_price' => 'required', 
-            'discount_price' => 'required', 
-            'discount_percentage' => 'required', 
-            'stock' => 'required',  
+            'description' => 'required|string',
+            'department' => 'required',
+            'condition' => 'required',
+            'option' => 'required',
+            'original_price' => 'required',
+            'discount_price' => 'required',
+            'discount_percentage' => 'required',
+            'stock' => 'required',
         ]);
         if ($request->hasFile('img')) {
             $file = $request->file('img');
             $postFields = [
-                'path' =>'storage/product',
-                'image' =>  curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
+                'path' => 'storage/product',
+                'image' => curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
             ];
-            $path = $this->postApi('image-upload',$postFields);  
+            $path = $this->postApi('image-upload', $postFields);
             $request->img = $path['storage_path'];
         }
-        
-        $department = explode(",",$request->department);
-        $option = explode(",",$request->option);
+
+        $department = explode(",", $request->department);
+        $option = explode(",", $request->option);
         $product = Product::create([
             'brand' => $request->brand,
             'title' => $request->title,
@@ -71,33 +72,33 @@ class ProductController extends Controller
     }
 
     function updateProduct(request $request, $slug)
-    {   
+    {
         $request->validate([
             'brand' => 'required',
             'title' => 'required',
-            'description' => 'required|string',  
-            'department' => 'required',     
-            'condition' => 'required', 
-            'option' => 'required',        
-            'original_price' => 'required', 
-            'discount_price' => 'required', 
-            'discount_percentage' => 'required', 
-            'stock' => 'required',  
+            'description' => 'required|string',
+            'department' => 'required',
+            'condition' => 'required',
+            'option' => 'required',
+            'original_price' => 'required',
+            'discount_price' => 'required',
+            'discount_percentage' => 'required',
+            'stock' => 'required',
         ]);
         if ($request->hasFile('img')) {
             $file = $request->file('img');
             $postFields = [
-                'path' =>'storage/product',
-                'image' =>  curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
-            ]  ;
-            $path = $this->postApi('image-upload',$postFields);  
+                'path' => 'storage/product',
+                'image' => curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
+            ];
+            $path = $this->postApi('image-upload', $postFields);
             $request->img = $path['storage_path'];
         }
-        $product = Product::firstOrFail('id',$slug);
+        $product = Product::firstOrFail('id', $slug);
         if (!$product) {
             die('No Product found');
         }
-        $option = explode(",",$request->option);
+        $option = explode(",", $request->option);
         $product->brand = $request->brand;
         $product->title = $request->title;
         $product->description = $request->description;
@@ -110,7 +111,7 @@ class ProductController extends Controller
         $product->stock = $request->stock;
         $product->featured = $request->featured;
         $product->author = session('user_data')['id'];
-        
+
         $product->save();
         return redirect('product-list');
     }
@@ -146,13 +147,15 @@ class ProductController extends Controller
             $img = isset($imagePaths[$rowIndex - 1]) ? $imagePaths[$rowIndex - 1] : 'null';
             echo $img;
             echo "<br>";
-            if($columns[1]=='')break;
+            if ($columns[1] == '')
+                break;
             $department = explode(',', trim($columns[10]));
+            $options = explode(',', trim($columns[3]));
             Product::create([
                 'brand' => trim($columns[0]),
                 'title' => trim($columns[1]),
                 'description' => trim($columns[2]),
-                'options' => trim($columns[3]),
+                'options' => json_encode($options),
                 'original_price' => trim($columns[4]),
                 'discount_price' => trim($columns[5]),
                 'discount_percentage' => trim($columns[6]),
@@ -192,11 +195,12 @@ class ProductController extends Controller
 
             $newImageName = uniqid() . '.' . $extension;
             $postFields = [
-                'path' =>'storage/product',
-                'image' =>  curl_file_create($path, mime_content_type($path), basename($path)),
-            ]  ;
-            $path = $this->postApi('image-upload',$postFields);  
-            $imagePaths[$rowIndex - 1] = $path['storage_path'];;
+                'path' => 'storage/product',
+                'image' => curl_file_create($path, mime_content_type($path), basename($path)),
+            ];
+            $path = $this->postApi('image-upload', $postFields);
+            $imagePaths[$rowIndex - 1] = $path['storage_path'];
+            ;
 
 
 
@@ -204,7 +208,7 @@ class ProductController extends Controller
             $path = $drawing->getPath();
             $imageContents = file_get_contents($path);
             $extension = pathinfo($path, PATHINFO_EXTENSION);
-            
+
         }
 
         return $imagePaths;
@@ -229,4 +233,15 @@ class ProductController extends Controller
         $data['products'] = Product::all()->toArray();
         return view('product.productList', $data);
     }
+
+    public function deleteProduct($id)
+    {   
+        $product = Product::find($id);
+        if (!$product) {
+            return 0;
+        }
+        $product->delete();
+        return 1;
+    }
+
 }
