@@ -72,7 +72,7 @@
                                                         <td>{{$value['condition']}}</td>
                                                         <td>{{($value['category'])}}</td>
                                                         <td>{{$value['ship_info']}}</td>
-                                                        <td><a href="{{url('lot/edit/'.$value['id'])}}"><div class="btn btn-primary btn-sm">Edit</div></a> <a id="del_{{$value['id']}}" onclick="del({{$value['id']}})"><div class="btn btn-sm btn-danger">Delete</div></a></td>
+                                                        <td><a href="{{url('lot/edit/'.$value['enc_id'])}}"><div class="btn btn-primary btn-sm">Edit</div></a> <a id="del_{{$value['id']}}" onclick="del({{$value['id']}})"><div class="btn btn-sm btn-danger">Delete</div></a></td>
                                                     </tr>
                                         @endforeach
                                     </tbody>
