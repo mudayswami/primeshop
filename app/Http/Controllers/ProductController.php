@@ -146,6 +146,8 @@ class ProductController extends Controller
             $img = isset($imagePaths[$rowIndex - 1]) ? $imagePaths[$rowIndex - 1] : 'null';
             echo $img;
             echo "<br>";
+            if($columns[1]=='')break;
+            $department = explode(',', trim($columns[10]));
             Product::create([
                 'brand' => trim($columns[0]),
                 'title' => trim($columns[1]),
@@ -157,7 +159,7 @@ class ProductController extends Controller
                 'stock' => trim($columns[7]),
                 'img' => $img,
                 'condition' => trim($columns[9]),
-                'department' => trim($columns[10]),
+                'department' => json_encode($department),
                 'author' => session('user_data')['id']
             ]);
         }
