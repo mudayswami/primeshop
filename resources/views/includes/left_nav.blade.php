@@ -35,7 +35,7 @@
                     </span>
                     <h4 class="text-section">Auction</h4>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item d-none">
                     <a data-bs-toggle="collapse" href="#base">
                         <i class="fas fa-layer-group"></i>
                         <p>Home Page</p>
