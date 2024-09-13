@@ -42,14 +42,13 @@ class ProductController extends Controller
             $request->img = $path['storage_path'];
         }
 
-        $department = explode(",", $request->department);
         $option = explode(",", $request->option);
         $product = Product::create([
             'brand' => $request->brand,
             'title' => $request->title,
             'description' => $request->description,
             'img' => $request->img,
-            'department' => json_encode($department),
+            'department' => json_encode($request->department),
             'condition' => $request->condition,
             'options' => json_encode($option),
             'original_price' => $request->original_price,
