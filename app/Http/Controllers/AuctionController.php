@@ -320,7 +320,7 @@ class AuctionController extends Controller
     function winners(Request $request)
     {
 
-        $data['bids'] = Bids::join('tbl_lot', 'bids.lot', '=', 'tbl_lot.id')->join('user', 'user.user_id', '=', 'bids.user_id')
+        $data['winner'] = Bids::join('tbl_lot', 'bids.lot', '=', 'tbl_lot.id')->join('user', 'user.user_id', '=', 'bids.user_id')
             ->select('bids.*', 'tbl_lot.enc_id', 'tbl_lot.title', 'user.first_name', 'user.last_name')->where('bids.status', '=', 'won')->get();
         return view('auction.winners', $data);
     }

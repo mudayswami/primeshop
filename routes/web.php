@@ -37,6 +37,7 @@ Route::post('update-status/{id}', [AuctionController::class, 'updateStatus']);
 Route::post('auction-approve',[AuctionController::class,'auctionApprove']);
 Route::post('update-category/{id}',[AuctionController::class,'updateCategory']);
 Route::get('delete-category/{id}',[AuctionController::class,'deleteCategory']);
+Route::get('winners',[AuctionController::class,'winners']);
 // End Auction
 
 

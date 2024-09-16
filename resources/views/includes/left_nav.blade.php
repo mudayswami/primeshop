@@ -174,7 +174,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#">
+                                <a href="{{url('winners')}}">
                                     <span class="sub-item">Winners</span>
                                 </a>
                             </li>
