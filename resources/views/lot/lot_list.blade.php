@@ -34,6 +34,15 @@
                                                                         </li> -->
                 </ul>
             </div>
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <div class="page-category">
                 <div class="row">
                     <div class="col-md-12">
@@ -46,6 +55,7 @@
                                 <table id="mytab" class="display table table-striped table-hover dataTable">
                                     <thead>
                                         <tr>
+                                            <th>Id</th>
                                             <th>Status</th>
                                             <th>Auction</th>
                                             <th>Title</th>
@@ -59,6 +69,7 @@
                                     <tbody>
                                         @foreach ($lots as $key => $value)
                                                     <tr class="@if($key % 2 == 0) odd @else even @endif">
+                                                        <td>{{$value['id']}}</td>
                                                         <td>
                                                         @if($value['status'] == 1)
                                                             <span class="badge rounded-pill bg-success">Active</span>

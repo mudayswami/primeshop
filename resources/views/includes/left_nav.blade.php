@@ -200,7 +200,11 @@
                                     <span class="sub-item">Add admin user</span>
                                 </a>
                             </li>
-
+                            <li>
+                                <a href="{{url('admin-users')}}">
+                                    <span class="sub-item">Admin users</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -213,15 +217,15 @@
                     <div class="collapse" id="charts">
                         <ul class="nav nav-collapse" id="sidebar-links">
                             <li>
-                                <a href="#">
-                                    <span class="sub-item">All users</span>
+                                <a href="{{url('allusers')}}">
+                                    <span class="sub-item">Users</span>
                                 </a>
                             </li>
-                            <li>
+                            <!-- <li>
                                 <a href="#">
                                     <span class="sub-item">New Users</span>
                                 </a>
-                            </li>
+                            </li> -->
                         </ul>
                     </div>
                 </li>

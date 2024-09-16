@@ -69,7 +69,7 @@
                                 </form>
                                 <div class="form-group col-lg-4">
                                     <label class="h1" for="file">Check this dummy File</label>
-                                    <a class="form-control h3" href="{{url('storage/auction/auction_bulk_upload.xlsx')}}"><u><b>Demo File</b></u></a>
+                                    <a class="form-control h3" href="{{url('assets/files/Auction_Bulk.xlsx')}}"><u><b>Demo File</b></u></a>
                                 </div>
                             </div>
                         </div>

@@ -21,34 +21,47 @@ class AuctionController extends Controller
 
     function post_auction(Request $request)
     {
-        if ($request->hasFile('img')) {
-            $file = $request->file('img');
-            $postFields = [
-                'path' =>'storage/auction',
-                'image' =>  curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
-            ]  ;
-            $path = $this->postApi('image-upload',$postFields);  
-            $request->img = $path['storage_path'];
+        try {
+            $request->validate([
+                'title' => 'required',
+                'description' => 'required|string',
+                'img' => 'required',
+                'start_date' => 'required',
+                'end_date' => 'required',
+                'lots' => 'required',
+                'category' => 'required',
+            ]);
+            if ($request->hasFile('img')) {
+                $file = $request->file('img');
+                $postFields = [
+                    'path' => 'storage/auction',
+                    'image' => curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
+                ];
+                $path = $this->postApi('image-upload', $postFields);
+                $request->img = $path['storage_path'];
+            }
+            $auction = Auction::create([
+                'enc_id' => md5(date('Y-m-d H:i:s')),
+                'title' => $request->title,
+                'description' => $request->description,
+                'start' => $request->start_date,
+                'end' => $request->end_date,
+                'img' => $request->img,
+                'type' => $request->type,
+                'category' => json_encode($request->category),
+                'location' => $request->location,
+                'lots' => $request->lots,
+                'terms_and_conditions' => $request->terms,
+                'buyer_premium' => $request->buyer_premium,
+                'seller_commission' => $request->seller_premium,
+                'fees' => $request->fees,
+                'vat_rate' => $request->vat,
+                'other_tax' => $request->taxes,
+            ]);
+            return redirect('auction-list');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
-        $auction = Auction::create([
-            'enc_id' => md5(date('Y-m-d H:i:s')),
-            'title' => $request->title,
-            'description' => $request->description,
-            'start' => $request->start_date,
-            'end' => $request->end_date,
-            'img' => $request->img,
-            'type' => $request->type,
-            'category' => json_encode($request->category),
-            'location' => $request->location,
-            'lots' => $request->lots,
-            'terms_and_conditions' => $request->terms,
-            'buyer_premium' => $request->buyer_premium,
-            'seller_commission' => $request->seller_premium,
-            'fees' => $request->fees,
-            'vat_rate' => $request->vat,
-            'other_tax' => $request->taxes,
-        ]);
-        return redirect('auction-list');
     }
 
     function bulk_upload_auction(request $request)
@@ -57,52 +70,57 @@ class AuctionController extends Controller
     }
     function post_bulk_auction(request $request)
     {
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls',
-        ]);
+        try {
 
-        $path = $request->file('file')->store('temp');
-        $filePath = storage_path('app/' . $path);
-
-        $spreadsheet = IOFactory::load($filePath);
-        $sheet = $spreadsheet->getActiveSheet();
-        $imagePaths = $this->extractImages($sheet);
-        foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-            if ($rowIndex === 1) {
-                continue;
-            }
-
-            $cellIterator = $row->getCellIterator();
-            $cellIterator->setIterateOnlyExistingCells(false);
-
-            $columns = [];
-            foreach ($cellIterator as $cell) {
-                $columns[] = $cell->getValue();
-            }
-            $img = isset($imagePaths[$rowIndex - 1]) ? $imagePaths[$rowIndex - 1] : 'null';
-            echo $img;
-            echo "<br>";
-            Auction::create([
-                'enc_id' => md5(date('Y-m-d H:i:s')),
-                'title' => trim($columns[0]),
-                'description' => trim($columns[1]),
-                'start' => ExcelDate::excelToDateTimeObject($columns[2]),
-                'end' => ExcelDate::excelToDateTimeObject($columns[3]),
-                'img' => $img,
-                'type' => trim($columns[5]),
-                'category' => trim($columns[6]),
-                'location' => trim($columns[7]),
-                'lots' => trim($columns[8]),
-                'terms_and_conditions' => trim($columns[9]),
-                'buyer_premium' => trim($columns[10]),
-                'seller_commission' => trim($columns[11]),
-                'fees' => trim($columns[12]),
-                'vat_rate' => trim($columns[13]),
-                'other_tax' => trim($columns[14]),
+            $request->validate([
+                'file' => 'required|file|mimes:xlsx,xls',
             ]);
+
+            $path = $request->file('file')->store('temp');
+            $filePath = storage_path('app/' . $path);
+
+            $spreadsheet = IOFactory::load($filePath);
+            $sheet = $spreadsheet->getActiveSheet();
+            $imagePaths = $this->extractImages($sheet);
+            foreach ($sheet->getRowIterator() as $rowIndex => $row) {
+                if ($rowIndex === 1) {
+                    continue;
+                }
+
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+
+                $columns = [];
+                foreach ($cellIterator as $cell) {
+                    $columns[] = $cell->getValue();
+                }
+                $img = isset($imagePaths[$rowIndex - 1]) ? $imagePaths[$rowIndex - 1] : 'null';
+                echo $img;
+                echo "<br>";
+                Auction::create([
+                    'enc_id' => md5(date('Y-m-d H:i:s')),
+                    'title' => trim($columns[0]),
+                    'description' => trim($columns[1]),
+                    'start' => ExcelDate::excelToDateTimeObject($columns[2]),
+                    'end' => ExcelDate::excelToDateTimeObject($columns[3]),
+                    'img' => $img,
+                    'type' => trim($columns[5]),
+                    'category' => trim($columns[6]),
+                    'location' => trim($columns[7]),
+                    'lots' => trim($columns[8]),
+                    'terms_and_conditions' => trim($columns[9]),
+                    'buyer_premium' => trim($columns[10]),
+                    'seller_commission' => trim($columns[11]),
+                    'fees' => trim($columns[12]),
+                    'vat_rate' => trim($columns[13]),
+                    'other_tax' => trim($columns[14]),
+                ]);
+            }
+            Storage::delete($path);
+            return redirect('auction-list');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
-        Storage::delete($path);
-        return redirect('auction-list');
     }
 
     private function extractImages($sheet)
@@ -129,10 +147,10 @@ class AuctionController extends Controller
 
             $newImageName = uniqid() . '.' . $extension;
             $postFields = [
-                'path' =>'storage/auction',
-                'image' =>  curl_file_create($path, mime_content_type($path), basename($path)),
-            ]  ;
-            $path = $this->postApi('image-upload',$postFields);  
+                'path' => 'storage/auction',
+                'image' => curl_file_create($path, mime_content_type($path), basename($path)),
+            ];
+            $path = $this->postApi('image-upload', $postFields);
             $imagePaths[$rowIndex - 1] = $path['storage_path'];
         }
 
@@ -167,37 +185,50 @@ class AuctionController extends Controller
 
     function update_auction(request $request, $slug)
     {
-        if ($request->hasFile('img')) {
-            $file = $request->file('img');
-            $postFields = [
-                'path' =>'storage/auction',
-                'image' =>  curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
-            ]  ;
-            $path = $this->postApi('image-upload',$postFields);  
-            $request->img = $path['storage_path'];
+        try {
+            $request->validate([
+                'title' => 'required',
+                'description' => 'required|string',
+                'img' => 'required',
+                'start_date' => 'required',
+                'end_date' => 'required',
+                'lots' => 'required',
+                'category' => 'required',
+            ]);
+            if ($request->hasFile('img')) {
+                $file = $request->file('img');
+                $postFields = [
+                    'path' => 'storage/auction',
+                    'image' => curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
+                ];
+                $path = $this->postApi('image-upload', $postFields);
+                $request->img = $path['storage_path'];
+            }
+            $auction = Auction::find($slug);
+            if (!$auction) {
+                die('no auction found');
+            }
+            $auction->title = $request->title;
+            $auction->status = $request->status;
+            $auction->description = $request->description;
+            $auction->start = $request->start_date;
+            $auction->end = $request->end_date;
+            $auction->img = $request->img;
+            $auction->type = $request->type;
+            $auction->category = json_encode($request->category);
+            $auction->location = $request->location;
+            $auction->lots = $request->lots;
+            $auction->terms_and_conditions = $request->terms;
+            $auction->buyer_premium = $request->buyer_premium;
+            $auction->seller_commission = $request->seller_premium;
+            $auction->fees = $request->fees;
+            $auction->vat_rate = $request->vat;
+            $auction->other_tax = $request->taxes;
+            $auction->save();
+            return redirect('auction-list');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
-        $auction = Auction::find($slug);
-        if (!$auction) {
-            die('no auction found');
-        }
-        $auction->title = $request->title;
-        $auction->status = $request->status;
-        $auction->description = $request->description;
-        $auction->start = $request->start_date;
-        $auction->end = $request->end_date;
-        $auction->img = $request->img;
-        $auction->type = $request->type;
-        $auction->category = json_encode($request->category);
-        $auction->location = $request->location;
-        $auction->lots = $request->lots;
-        $auction->terms_and_conditions = $request->terms;
-        $auction->buyer_premium = $request->buyer_premium;
-        $auction->seller_commission = $request->seller_premium;
-        $auction->fees = $request->fees;
-        $auction->vat_rate = $request->vat;
-        $auction->other_tax = $request->taxes;
-        $auction->save();
-        return redirect('auction-list');
     }
     function auction_delete(request $request, $id)
     {
@@ -238,8 +269,8 @@ class AuctionController extends Controller
             return 'Id not found';
         $register = AuctionRegister::find($id);
         if (!empty($register)) {
-                $register->approved = $request->status;
-                $register->save();
+            $register->approved = $request->status;
+            $register->save();
 
             return $request->status;
         } else {
@@ -247,36 +278,49 @@ class AuctionController extends Controller
         }
     }
 
-    function bids(Request $request){
+    function bids(Request $request)
+    {
 
-        $data['bids'] = Bids::join('tbl_lot','bids.lot','=','tbl_lot.id')->join('user','user.user_id','=','bids.user_id')
-        ->select('bids.*','tbl_lot.enc_id','tbl_lot.title','user.first_name','user.last_name')->get();
-        return view('auction.bids',$data);
+        $data['bids'] = Bids::join('tbl_lot', 'bids.lot', '=', 'tbl_lot.id')->join('user', 'user.user_id', '=', 'bids.user_id')
+            ->select('bids.*', 'tbl_lot.enc_id', 'tbl_lot.title', 'user.first_name', 'user.last_name')->get();
+        return view('auction.bids', $data);
     }
-    
+
     public function updateStatus(Request $request, $id)
-{
-    $request->validate([
-        'status' => 'required|in:won,lost,outbid,leading,withdrawn', 
-    ]);
-    $item = Bids::find($id);
-    if (!$item) {
-        return response()->json(['success' => false, 'message' => 'Item not found'], 404);
-    }
-    $item->status = $request->status;
-    $item->save();
+    {
+        $request->validate([
+            'status' => 'required|in:won,lost,outbid,leading,withdrawn',
+        ]);
+        $item = Bids::find($id);
+        if (!$item) {
+            return response()->json(['success' => false, 'message' => 'Item not found'], 404);
+        }
+        $item->status = $request->status;
+        $item->save();
 
-    return response()->json(['success' => true, 'message' => 'Status updated successfully']);
-}
-    function updateCategory(Request $request, $id){
+        return response()->json(['success' => true, 'message' => 'Status updated successfully']);
+    }
+    function updateCategory(Request $request, $id)
+    {
         $category = AuctionCategory::find($id)->first();
         $category->category = $request->category;
         $category->save();
-        return redirect('add-auction-category')->with('success', 'Category Update successfully.');;
+        return redirect('add-auction-category')->with('success', 'Category Update successfully.');
+        ;
     }
-    function deleteCategory(Request $request, $id){
+    function deleteCategory(Request $request, $id)
+    {
         $category = AuctionCategory::destroy($id);
-        return redirect('add-auction-category')->with('success', 'Category deleted successfully.');;
+        return redirect('add-auction-category')->with('success', 'Category deleted successfully.');
+        ;
+    }
+
+    function winners(Request $request)
+    {
+
+        $data['bids'] = Bids::join('tbl_lot', 'bids.lot', '=', 'tbl_lot.id')->join('user', 'user.user_id', '=', 'bids.user_id')
+            ->select('bids.*', 'tbl_lot.enc_id', 'tbl_lot.title', 'user.first_name', 'user.last_name')->where('bids.status', '=', 'won')->get();
+        return view('auction.winners', $data);
     }
 
 }

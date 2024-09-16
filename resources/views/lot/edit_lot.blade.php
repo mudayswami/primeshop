@@ -35,20 +35,21 @@
                                                                     </li> -->
                 </ul>
             </div>
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <div class="page-category">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="card-title">Edit Lot</div>@if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+                                <div class="card-title">Edit Lot</div>
                             </div>
                             <div class="card-body">
                                 <form method="post" action="<?php echo url('update-lot/'.$lot['enc_id']); ?>" enctype="multipart/form-data">
@@ -194,7 +195,7 @@
     <script>
         $(document).ready(function() {
         $('#category').select2();
-        $('#auction').select2();
+        //$('#auction').select2();
     });
         function valid(e) {
             e.preventDefault();

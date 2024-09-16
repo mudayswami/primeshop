@@ -39,15 +39,7 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="card-title">Edit Product</div>@if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+                                <div class="card-title">Edit Product</div>
                             </div>
                             <div class="card-body">
                                 <form method="post" action="{{url('update-product').'/'.$product->id}}" enctype="multipart/form-data">
@@ -147,8 +139,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#category').select2();
-            $('#auction').select2();
+            $('#department').select2();
+            // $('#auction').select2();
         });
         function valid(e) {
             e.preventDefault();

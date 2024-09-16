@@ -34,6 +34,15 @@
                                                                     </li> -->
                 </ul>
             </div>
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <div class="page-category">
                 <div class="row">
                     <div class="col-md-12">
@@ -41,15 +50,6 @@
                             <div class="card-header">
                                 <div class="card-title">Edit Auction</div>
                             </div>
-                            @if ($errors->any())
-                                <div class="alert alert-danger">
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
                             <div class="card-body">
                                 <form method="post" action="<?php echo url('update-auction/'.$auction["id"])?>" enctype="multipart/form-data">
                                     <div class="row">

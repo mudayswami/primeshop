@@ -13,7 +13,7 @@
     <div class="container">
         <div class="page-inner">
             <div class="page-header">
-                <h4 class="page-title">Auctions</h4>
+                <h4 class="page-title">Users</h4>
                 <ul class="breadcrumbs">
                     <li class="nav-home">
                         <a href="#">
@@ -24,67 +24,57 @@
                         <i class="icon-arrow-right"></i>
                     </li>
                     <li class="nav-item">
-                        <a href="auctions">Auctions</a>
+                        <a href="{{url('dashboard')}}">dashboard</a>
                     </li>
                     <li class="separator">
                         <i class="icon-arrow-right"></i>
                     </li>
+                    <!-- <li class="nav-item">
+                                                                            <a href="#">Starter Page</a>
+                                                                        </li> -->
                 </ul>
             </div>
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
             <div class="page-category">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="card-title">Auctions </div>
+                                <div class="card-title">Users </div>
                             </div>
                             <div class="card-body">
 
                                 <table id="mytab" class="display table table-striped table-hover dataTable">
                                     <thead>
                                         <tr>
-                                            <th>Title</th>
-                                            <th>Status</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Type</th>
-                                            <th>Category</th>
-                                            <th>Lots</th>
-                                            <th>Actions</th>
+                                            <th>Id</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Verified</th>
+                                            <th>Phone Number</th>
+                                            <th>Address</th>
+                                            <th>Town</th>
+                                            <!-- <th>Actions</th> -->
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($auctions as $key => $value)
-                                                                                <tr class="@if($key % 2 == 0) odd @else even @endif">
-                                                                                    <td>{{$value->title}}</td>
-                                                                                    <td>
-                                                                                        @if($value->status == 1)<span
-                                                                                        class="badge rounded-pill bg-success">Active</span>@else <span
-                                                                                        class="badge rounded-pill bg-danger">Inactive</span>@endif
-                                                                                        @if($value->end_date < date('Y-m-d H:i:s'))<span
-                                                                                        class="badge rounded-pill bg-danger">Expired</span>@elseif($value->start_date > date('Y-m-d H:i:s') && $value->end_date < date('Y-m-d H:i:s')) <span class="badge rounded-pill bg-success">Live</span>@else <sp
-                                                                                        a                                               n class="badge rounded-pill bg-warning text-dark">Upcoming</span> @endif
-                                                                                    </td>
-                                                                                    <td>{{$value->start}}</td>
-                                                                                    <td>{{$value->end}}</td>
-                                                                                    <td>{{$value->type}}</td>
-                                                                                    <td>{{$value->category}}</td>
-                                                                                    <td>{{$value->lots}}</td>
-                                                                                    <td><a href="{{url('auction/edit/' . $value->id)}}">
-                                                                                            <div class="btn btn-primary btn-sm">Edit</div>
-                                                                                        </a> <a id="del_{{$value->id}}" onclick="del({{$value->id}})">
-                                                                                            <div class="btn btn-sm btn-danger">Delete</div>
-                                                                                        </a></td>
-                                                                                </tr>
+                                        @foreach ($users as $key => $value)
+                                                    <tr class="@if($key % 2 == 0) odd @else even @endif">
+                                                        
+                                                        <td>{{$value->id}}</td>
+                                                        <td>{{$value->first_name}} {{$value->second_name}}</td>
+                                                        <td>{{$value->email}}</td>
+                                                        <td>
+                                                        @if($value->verified == 1)
+                                                            <span class="badge rounded-pill bg-success">Verified</span>
+                                                        @else
+                                                            <span class="badge rounded-pill bg-danger">Unverified</span>
+                                                        @endif
+                                                            </td>
+                                                        <td>{{$value->phone_number}}</td>
+                                                        <td>{{($value->address)}}</td>
+                                                        <td>{{$value->town}}</td>
+                                                        <!-- <td><a href="{{url('user/edit/'.$value['enc_id'])}}"><div class="btn btn-primary btn-sm">Edit</div></a> <a id="del_{{$value['id']}}" onclick="del({{$value['id']}})"><div class="btn btn-sm btn-danger">Delete</div></a></td> -->
+                                                    </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -101,14 +91,14 @@
 
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script> -->
     <script src="assets/js/plugin/datatables/datatables.min.js"></script>
-
+    
     <script>
 
         $(document).ready(function () {
             $("#mytab").DataTable({});
         });
 
-function del(e) {
+        function del(e) {
             swal({
                 title: "Are you sure?",
                 text: "You won't be able to revert this!",
@@ -135,15 +125,15 @@ function del(e) {
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
-                    url: "{{url('delete-auction')}}" + "/" + id,
+                    url: "{{url('delete-user')}}" + "/" + id,
                     type: 'post',
                     success: function (result) {
 
 
                         if (result == 1) {
                             var content = {};
-                            content.message = 'Auction Deleted successfully';
-                            content.title = "Delete Auction";
+                            content.message = 'User Deleted successfully';
+                            content.title = "User Delete";
 
                             content.icon = "fa fa-bell";
 
@@ -169,8 +159,8 @@ function del(e) {
                             }
                         } else {
                             var content = {};
-                            content.message = 'No auction Found';
-                            content.title = "Delete Auction";
+                            content.message = 'No user Found';
+                            content.title = "Delete user";
 
                             content.icon = "fa fa-bell";
 
@@ -197,8 +187,5 @@ function del(e) {
                 }
             });
         }
-
-
-        
     </script>
 @endpush

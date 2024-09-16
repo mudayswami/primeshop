@@ -45,7 +45,7 @@
 
         <div class="main-panel">
             @include('includes.top_nav')
-
+            
             @stack('content')
             @include('includes.footer')
         </div>

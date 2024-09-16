@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use Hash;
 use App\Models\AdminUser;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -39,7 +40,7 @@ class UserController extends Controller
 
         // Auth::login($admin);
 
-        return redirect('login');
+        return redirect('admin-users');
 
     }
 
@@ -68,6 +69,24 @@ class UserController extends Controller
         return redirect('login');
     }
 
+    function allUsers(Request $request){
+        $data['users'] = User::orderBy('created_at','desc')->get();
+        return view('user.allUsers',$data);
+    }
 
+    function adminUser(Request $request){
+        $data['users'] = AdminUser::orderBy('created_at','desc')->get();
+        return view('user.adminUsers',$data);
+    }
 
+    function deleteAdminUser(Request $request){
+        try {
+            $user = AdminUser::findOrFail($request->id);
+            $user->delete();
+            return 1;
+        } catch (Exception $e) {
+            return 0;
+        }
+        
+    }
 }

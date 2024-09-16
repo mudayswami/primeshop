@@ -21,51 +21,57 @@ class LotController extends Controller
     }
 
     function post_lot(request $request)
-    {   
-        $validated = $request->validate([
-            'auction_id' => 'required|integer',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'img' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'category' => 'required|array',
-            'condition' => 'required|string',
-            'start_bid' => 'required|numeric|min:0',
-            'next_bid' => 'required|numeric|min:0',
-        ]);
-        if ($request->hasFile('img')) {
-            $file = $request->file('img');
-            $postFields = [
-                'path' =>'storage/auction',
-                'image' =>  curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
-            ]  ;
-            $path = $this->postApi('image-upload',$postFields);  
-            $request->img = $path['storage_path'];
-        }
-        $lot = Lot::create([
-            'enc_id' => md5(date('Y-m-d H:i:s')),
-            'auction_id' => $request->auction_id,
-            'lot_num' => $request->lot_num,
-            'title' => $request->title,
-            'description' => $request->description,
-            'img' => $request->img,
-            'category' => json_encode($request->category),
-            'condition' => $request->condition,
-            'dimension' => $request->dimension,
-            'start_bid' => $request->start_bid,
-            'next_bid' => $request->next_bid,
-            'reserve_bid' => $request->reserve_bid,
-            'buyer_premium' => $request->buyer_premium,
-            'store_price' => $request->store_price,
-            'ship_info' => $request->ship_info,
-            'ship_cost' => $request->ship_cost,
-            'ship_restriction' => $request->ship_restriction,
-            'pickup' => $request->pickup,
-            'pickup_address' => $request->pickup_address,
-            'pickup_instruction' => $request->pickup_instruction,
-            'notes' => $request->notes,
-        ]);
+    {
 
-        return redirect('lot-list');
+        try {
+
+            $request->validate([
+                'auction_id' => 'required',
+                'title' => 'required',
+                'description' => 'required',
+                'img' => 'required',
+                'category' => 'required',
+                'condition' => 'required',
+                'start_bid' => 'required',
+                'next_bid' => 'required',
+            ]);
+            if ($request->hasFile('img')) {
+                $file = $request->file('img');
+                $postFields = [
+                    'path' => 'storage/auction',
+                    'image' => curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
+                ];
+                $path = $this->postApi('image-upload', $postFields);
+                $request->img = $path['storage_path'];
+            }
+            $lot = Lot::create([
+                'enc_id' => md5(date('Y-m-d H:i:s')),
+                'auction_id' => $request->auction_id,
+                'lot_num' => $request->lot_num,
+                'title' => $request->title,
+                'description' => $request->description,
+                'img' => $request->img,
+                'category' => json_encode($request->category),
+                'condition' => $request->condition,
+                'dimension' => $request->dimension,
+                'start_bid' => $request->start_bid,
+                'next_bid' => $request->next_bid,
+                'reserve_bid' => $request->reserve_bid,
+                'buyer_premium' => $request->buyer_premium,
+                'store_price' => $request->store_price,
+                'ship_info' => $request->ship_info,
+                'ship_cost' => $request->ship_cost,
+                'ship_restriction' => $request->ship_restriction,
+                'pickup' => $request->pickup,
+                'pickup_address' => $request->pickup_address,
+                'pickup_instruction' => $request->pickup_instruction,
+                'notes' => $request->notes,
+            ]);
+
+            return redirect('lot-list');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+        }
 
     }
 
@@ -80,51 +86,57 @@ class LotController extends Controller
     }
 
     function update_lot(request $request, $slug)
-    {   
-        $validated = $request->validate([
-            'auction_id' => 'required|integer',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'category' => 'required|array',
-            'condition' => 'required|string',
-            'start_bid' => 'required|numeric|min:0',
-            'next_bid' => 'required|numeric|min:0',
-        ]);
-        if ($request->hasFile('img')) {
-            $file = $request->file('img');
-            $postFields = [
-                'path' =>'storage/auction',
-                'image' =>  curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
-            ]  ;
-            $path = $this->postApi('image-upload',$postFields);  
-            $request->img = $path['storage_path'];
+    {
+
+        try {
+
+            $validated = $request->validate([
+                'auction_id' => 'required|integer',
+                'title' => 'required|string|max:255',
+                'description' => 'required|string',
+                'category' => 'required|array',
+                'condition' => 'required|string',
+                'start_bid' => 'required|numeric|min:0',
+                'next_bid' => 'required|numeric|min:0',
+            ]);
+            if ($request->hasFile('img')) {
+                $file = $request->file('img');
+                $postFields = [
+                    'path' => 'storage/auction',
+                    'image' => curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
+                ];
+                $path = $this->postApi('image-upload', $postFields);
+                $request->img = $path['storage_path'];
+            }
+            $lot = Lot::firstOrFail()->where('enc_id', $slug)->first();
+            if (!$lot) {
+                die('No Lot found');
+            }
+            $lot->auction_id = $request->auction_id;
+            $lot->lot_num = $request->lot_num;
+            $lot->title = $request->title;
+            $lot->description = $request->description;
+            $lot->img = $request->img;
+            $lot->category = json_encode($request->category);
+            $lot->condition = $request->condition;
+            $lot->dimension = $request->dimension;
+            $lot->start_bid = $request->start_bid;
+            $lot->next_bid = $request->next_bid;
+            $lot->reserve_bid = $request->reserve_bid;
+            $lot->buyer_premium = $request->buyer_premium;
+            $lot->store_price = $request->store_price;
+            $lot->ship_info = $request->ship_info;
+            $lot->ship_cost = $request->ship_cost;
+            $lot->ship_restriction = $request->ship_restriction;
+            $lot->pickup = $request->pickup;
+            $lot->pickup_address = $request->pickup_address;
+            $lot->pickup_instruction = $request->pickup_instruction;
+            $lot->notes = $request->notes;
+            $lot->save();
+            return redirect('lot-list');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
-        $lot = Lot::firstOrFail()->where('enc_id', $slug)->first();
-        if (!$lot) {
-            die('No Lot found');
-        }
-        $lot->auction_id = $request->auction_id;
-        $lot->lot_num = $request->lot_num;
-        $lot->title = $request->title;
-        $lot->description = $request->description;
-        $lot->img = $request->img;
-        $lot->category = json_encode($request->category);
-        $lot->condition = $request->condition;
-        $lot->dimension = $request->dimension;
-        $lot->start_bid = $request->start_bid;
-        $lot->next_bid = $request->next_bid;
-        $lot->reserve_bid = $request->reserve_bid;
-        $lot->buyer_premium = $request->buyer_premium;
-        $lot->store_price = $request->store_price;
-        $lot->ship_info = $request->ship_info;
-        $lot->ship_cost = $request->ship_cost;
-        $lot->ship_restriction = $request->ship_restriction;
-        $lot->pickup = $request->pickup;
-        $lot->pickup_address = $request->pickup_address;
-        $lot->pickup_instruction = $request->pickup_instruction;
-        $lot->notes = $request->notes;
-        $lot->save();
-        return redirect('lot-list');
     }
 
     function deleteLot(request $request, $id)
@@ -144,59 +156,63 @@ class LotController extends Controller
     }
     function post_bulk_lots(request $request)
     {
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls',
-            'auction_id' => 'required|int'
-        ]);
-
-        $path = $request->file('file')->store('temp');
-        $filePath = storage_path('app/' . $path);
-
-        $spreadsheet = IOFactory::load($filePath);
-        $sheet = $spreadsheet->getActiveSheet();
-        $imagePaths = $this->extractImages($sheet);
-        $auction_id = $request->auction_id;
-        foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-            if ($rowIndex === 1) {
-                continue;
-            }
-
-            $cellIterator = $row->getCellIterator();
-            $cellIterator->setIterateOnlyExistingCells(false);
-
-            $columns = [];
-            foreach ($cellIterator as $cell) {
-                $columns[] = $cell->getValue();
-            }
-            $img = isset($imagePaths[$rowIndex - 1]) ? $imagePaths[$rowIndex - 1] : 'null';
-            echo $img;
-            echo "<br>";
-            Lot::create([
-                'enc_id' => md5(date('Y-m-d H:i:s')),
-                'auction_id' => $auction_id,
-                'lot_num' => trim($columns[0]),
-                'title' => trim($columns[1]),
-                'description' => trim($columns[2]),
-                'img' => $img,
-                'category' => trim($columns[4]),
-                'condition' => trim($columns[5]),
-                'dimension' => trim($columns[6]),
-                'start_bid' => trim($columns[7]),
-                'next_bid' => trim($columns[8]),
-                'reserve_bid' => trim($columns[9]),
-                'buyer_premium' => trim($columns[10]),
-                'store_price' => trim($columns[11]),
-                'ship_info' => trim($columns[12]),
-                'ship_cost' => trim($columns[13]),
-                'ship_restriction' => trim($columns[14]),
-                'pickup' => trim($columns[15]),
-                'pickup_address' => trim($columns[16]),
-                'pickup_instruction' => trim($columns[17]),
-                'notes' => trim($columns[18]),
+        try {
+            $request->validate([
+                'file' => 'required|file|mimes:xlsx,xls',
+                'auction_id' => 'required|int'
             ]);
+
+            $path = $request->file('file')->store('temp');
+            $filePath = storage_path('app/' . $path);
+
+            $spreadsheet = IOFactory::load($filePath);
+            $sheet = $spreadsheet->getActiveSheet();
+            $imagePaths = $this->extractImages($sheet);
+            $auction_id = $request->auction_id;
+            foreach ($sheet->getRowIterator() as $rowIndex => $row) {
+                if ($rowIndex === 1) {
+                    continue;
+                }
+
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+
+                $columns = [];
+                foreach ($cellIterator as $cell) {
+                    $columns[] = $cell->getValue();
+                }
+                $img = isset($imagePaths[$rowIndex - 1]) ? $imagePaths[$rowIndex - 1] : 'null';
+                echo $img;
+                echo "<br>";
+                Lot::create([
+                    'enc_id' => md5(date('Y-m-d H:i:s')),
+                    'auction_id' => $auction_id,
+                    'lot_num' => trim($columns[0]),
+                    'title' => trim($columns[1]),
+                    'description' => trim($columns[2]),
+                    'img' => $img,
+                    'category' => trim($columns[4]),
+                    'condition' => trim($columns[5]),
+                    'dimension' => trim($columns[6]),
+                    'start_bid' => trim($columns[7]),
+                    'next_bid' => trim($columns[8]),
+                    'reserve_bid' => trim($columns[9]),
+                    'buyer_premium' => trim($columns[10]),
+                    'store_price' => trim($columns[11]),
+                    'ship_info' => trim($columns[12]),
+                    'ship_cost' => trim($columns[13]),
+                    'ship_restriction' => trim($columns[14]),
+                    'pickup' => trim($columns[15]),
+                    'pickup_address' => trim($columns[16]),
+                    'pickup_instruction' => trim($columns[17]),
+                    'notes' => trim($columns[18]),
+                ]);
+            }
+            Storage::delete($path);
+            return redirect('auction-list');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
-        Storage::delete($path);
-        return redirect('auction-list');
     }
 
     private function extractImages($sheet)
@@ -224,11 +240,12 @@ class LotController extends Controller
 
             $newImageName = uniqid() . '.' . $extension;
             $postFields = [
-                'path' =>'storage/auction',
-                'image' =>  curl_file_create($path, mime_content_type($path), basename($path)),
-            ]  ;
-            $path = $this->postApi('image-upload',$postFields);  
-            $imagePaths[$rowIndex - 1] = $path['storage_path'];;
+                'path' => 'storage/auction',
+                'image' => curl_file_create($path, mime_content_type($path), basename($path)),
+            ];
+            $path = $this->postApi('image-upload', $postFields);
+            $imagePaths[$rowIndex - 1] = $path['storage_path'];
+            ;
 
 
 
@@ -236,7 +253,7 @@ class LotController extends Controller
             $path = $drawing->getPath();
             $imageContents = file_get_contents($path);
             $extension = pathinfo($path, PATHINFO_EXTENSION);
-            
+
         }
 
         return $imagePaths;

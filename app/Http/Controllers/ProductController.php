@@ -20,45 +20,49 @@ class ProductController extends Controller
 
     function postProduct(request $request)
     {
-        $request->validate([
-            'brand' => 'required',
-            'title' => 'required',
-            'description' => 'required|string',
-            'department' => 'required',
-            'condition' => 'required',
-            'option' => 'required',
-            'original_price' => 'required',
-            'discount_price' => 'required',
-            'discount_percentage' => 'required',
-            'stock' => 'required',
-        ]);
-        if ($request->hasFile('img')) {
-            $file = $request->file('img');
-            $postFields = [
-                'path' => 'storage/product',
-                'image' => curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
-            ];
-            $path = $this->postApi('image-upload', $postFields);
-            $request->img = $path['storage_path'];
+        try {
+            $request->validate([
+                'brand' => 'required',
+                'title' => 'required',
+                'description' => 'required|string',
+                'department' => 'required',
+                'condition' => 'required',
+                'option' => 'required',
+                'original_price' => 'required',
+                'discount_price' => 'required',
+                'discount_percentage' => 'required',
+                'stock' => 'required',
+            ]);
+            if ($request->hasFile('img')) {
+                $file = $request->file('img');
+                $postFields = [
+                    'path' => 'storage/product',
+                    'image' => curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
+                ];
+                $path = $this->postApi('image-upload', $postFields);
+                $request->img = $path['storage_path'];
+            }
+
+            $option = explode(",", $request->option);
+            $product = Product::create([
+                'brand' => $request->brand,
+                'title' => $request->title,
+                'description' => $request->description,
+                'img' => $request->img,
+                'department' => json_encode($request->department),
+                'condition' => $request->condition,
+                'options' => json_encode($request->option),
+                'original_price' => $request->original_price,
+                'discount_price' => $request->discount_price,
+                'discount_percentage' => $request->discount_percentage,
+                'stock' => $request->stock,
+                'author' => session('user_data')['id']
+            ]);
+
+            return redirect('product-list');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
-
-        $option = explode(",", $request->option);
-        $product = Product::create([
-            'brand' => $request->brand,
-            'title' => $request->title,
-            'description' => $request->description,
-            'img' => $request->img,
-            'department' => json_encode($request->department),
-            'condition' => $request->condition,
-            'options' => json_encode($option),
-            'original_price' => $request->original_price,
-            'discount_price' => $request->discount_price,
-            'discount_percentage' => $request->discount_percentage,
-            'stock' => $request->stock,
-            'author' => session('user_data')['id']
-        ]);
-
-        return redirect('product-list');
 
     }
 
@@ -70,49 +74,53 @@ class ProductController extends Controller
 
     }
 
-    function updateProduct(request $request, $slug)
+    function updateProduct(request $request, $id)
     {
-        $request->validate([
-            'brand' => 'required',
-            'title' => 'required',
-            'description' => 'required|string',
-            'department' => 'required',
-            'condition' => 'required',
-            'option' => 'required',
-            'original_price' => 'required',
-            'discount_price' => 'required',
-            'discount_percentage' => 'required',
-            'stock' => 'required',
-        ]);
-        if ($request->hasFile('img')) {
-            $file = $request->file('img');
-            $postFields = [
-                'path' => 'storage/product',
-                'image' => curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
-            ];
-            $path = $this->postApi('image-upload', $postFields);
-            $request->img = $path['storage_path'];
-        }
-        $product = Product::firstOrFail('id', $slug);
-        if (!$product) {
-            die('No Product found');
-        }
-        $option = explode(",", $request->option);
-        $product->brand = $request->brand;
-        $product->title = $request->title;
-        $product->description = $request->description;
-        $product->img = $request->img;
-        $product->department = json_encode($request->department);
-        $product->options = json_encode($option);
-        $product->original_price = $request->original_price;
-        $product->discount_price = $request->discount_price;
-        $product->discount_percentage = $request->discount_percentage;
-        $product->stock = $request->stock;
-        $product->featured = $request->featured;
-        $product->author = session('user_data')['id'];
+        try {
+            $request->validate([
+                'brand' => 'required',
+                'title' => 'required',
+                'description' => 'required|string',
+                'department' => 'required',
+                'condition' => 'required',
+                'option' => 'required',
+                'original_price' => 'required',
+                'discount_price' => 'required',
+                'discount_percentage' => 'required',
+                'stock' => 'required',
+            ]);
+            if ($request->hasFile('img')) {
+                $file = $request->file('img');
+                $postFields = [
+                    'path' => 'storage/product',
+                    'image' => curl_file_create($file->getPathname(), $file->getMimeType(), $file->getClientOriginalName()),
+                ];
+                $path = $this->postApi('image-upload', $postFields);
+                $request->img = $path['storage_path'];
+            }
+            $product = Product::where('id', $id)->get()->first();
+            if (!$product) {
+                die('No Product found');
+            }
+            // $option = explode(",", $request->option);
+            $product->brand = $request->brand;
+            $product->title = $request->title;
+            $product->description = $request->description;
+            $product->img = $request->img;
+            $product->department = json_encode($request->department);
+            $product->options = $request->option;
+            $product->original_price = $request->original_price;
+            $product->discount_price = $request->discount_price;
+            $product->discount_percentage = $request->discount_percentage;
+            $product->stock = $request->stock;
+            $product->featured = $request->featured;
+            $product->author = session('user_data')['id'];
 
-        $product->save();
-        return redirect('product-list');
+            $product->save();
+            return redirect('product-list');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+        }
     }
     function bulkUploadsProducts(request $request)
     {
@@ -120,53 +128,56 @@ class ProductController extends Controller
     }
     function postBulkProduct(request $request)
     {
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls',
-        ]);
-
-        $path = $request->file('file')->store('temp');
-        $filePath = storage_path('app/' . $path);
-
-        $spreadsheet = IOFactory::load($filePath);
-        $sheet = $spreadsheet->getActiveSheet();
-        $imagePaths = $this->extractImages($sheet);
-        $auction_id = $request->auction_id;
-        foreach ($sheet->getRowIterator() as $rowIndex => $row) {
-            if ($rowIndex === 1) {
-                continue;
-            }
-
-            $cellIterator = $row->getCellIterator();
-            $cellIterator->setIterateOnlyExistingCells(false);
-
-            $columns = [];
-            foreach ($cellIterator as $cell) {
-                $columns[] = $cell->getValue();
-            }
-            $img = isset($imagePaths[$rowIndex - 1]) ? $imagePaths[$rowIndex - 1] : 'null';
-            echo $img;
-            echo "<br>";
-            if ($columns[1] == '')
-                break;
-            $department = explode(',', trim($columns[10]));
-            $options = explode(',', trim($columns[3]));
-            Product::create([
-                'brand' => trim($columns[0]),
-                'title' => trim($columns[1]),
-                'description' => trim($columns[2]),
-                'options' => json_encode($options),
-                'original_price' => trim($columns[4]),
-                'discount_price' => trim($columns[5]),
-                'discount_percentage' => trim($columns[6]),
-                'stock' => trim($columns[7]),
-                'img' => $img,
-                'condition' => trim($columns[9]),
-                'department' => json_encode($department),
-                'author' => session('user_data')['id']
+        try {
+            $request->validate([
+                'file' => 'required|file|mimes:xlsx,xls',
             ]);
+
+            $path = $request->file('file')->store('temp');
+            $filePath = storage_path('app/' . $path);
+
+            $spreadsheet = IOFactory::load($filePath);
+            $sheet = $spreadsheet->getActiveSheet();
+            $imagePaths = $this->extractImages($sheet);
+            $auction_id = $request->auction_id;
+            foreach ($sheet->getRowIterator() as $rowIndex => $row) {
+                if ($rowIndex === 1) {
+                    continue;
+                }
+
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(false);
+
+                $columns = [];
+                foreach ($cellIterator as $cell) {
+                    $columns[] = $cell->getValue();
+                }
+                $img = isset($imagePaths[$rowIndex - 1]) ? $imagePaths[$rowIndex - 1] : 'null';
+                echo $img;
+                echo "<br>";
+                if ($columns[1] == '')
+                    break;
+                $department = explode(',', trim($columns[10]));
+                Product::create([
+                    'brand' => trim($columns[0]),
+                    'title' => trim($columns[1]),
+                    'description' => trim($columns[2]),
+                    'options' => trim($columns[3]),
+                    'original_price' => trim($columns[4]),
+                    'discount_price' => trim($columns[5]),
+                    'discount_percentage' => trim($columns[6]),
+                    'stock' => trim($columns[7]),
+                    'img' => $img,
+                    'condition' => trim($columns[9]),
+                    'department' => json_encode($department),
+                    'author' => session('user_data')['id']
+                ]);
+            }
+            Storage::delete($path);
+            return redirect('product-list');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
-        Storage::delete($path);
-        return redirect('product-list');
     }
 
     private function extractImages($sheet)
@@ -234,13 +245,17 @@ class ProductController extends Controller
     }
 
     public function deleteProduct($id)
-    {   
-        $product = Product::find($id);
-        if (!$product) {
-            return 0;
+    {
+        try {
+            $product = Product::find($id);
+            if (!$product) {
+                return 0;
+            }
+            $product->delete();
+            return 1;
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
-        $product->delete();
-        return 1;
     }
 
 }

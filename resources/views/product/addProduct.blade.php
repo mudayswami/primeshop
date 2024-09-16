@@ -133,8 +133,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/js/select2.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#category').select2();
-            $('#auction').select2();
+            $('#department').select2();
+            // $('#').select2();
         });
         function valid(e) {
             e.preventDefault();
