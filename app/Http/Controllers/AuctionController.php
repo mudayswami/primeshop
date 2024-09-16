@@ -233,6 +233,7 @@ class AuctionController extends Controller
     function auction_delete(request $request, $id)
     {
         try {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             $auction = Auction::findOrFail($id);
             $auction->delete();
             return 1;

@@ -142,6 +142,7 @@ class LotController extends Controller
     function deleteLot(request $request, $id)
     {
         try {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             $auction = Lot::findOrFail($id);
             $auction->delete();
             return 1;
